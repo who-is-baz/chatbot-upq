@@ -1,3 +1,36 @@
+texto,intencion,respuesta,fuente
+¿Cómo me inscribo a la UPQ?,admision,[SEMILLA] Información de admisión pendiente de verificar en el sitio oficial.,https://www.upq.mx
+¿Cuáles son los requisitos para entrar?,admision,[SEMILLA] Información de admisión pendiente de verificar en el sitio oficial.,https://www.upq.mx
+quiero ser alumno nuevo que tengo que hacer,admision,[SEMILLA] Información de admisión pendiente de verificar en el sitio oficial.,https://www.upq.mx
+cuando abren la convocatoria de ingreso,admision,[SEMILLA] Información de admisión pendiente de verificar en el sitio oficial.,https://www.upq.mx
+Proceso de admisión para nuevo ingreso,admision,[SEMILLA] Información de admisión pendiente de verificar en el sitio oficial.,https://www.upq.mx
+como puedo aplicar para estudiar en la universidad,admision,[SEMILLA] Información de admisión pendiente de verificar en el sitio oficial.,https://www.upq.mx
+¿Hay becas disponibles?,becas,[SEMILLA] Información de becas pendiente de verificar en el sitio oficial.,https://www.upq.mx
+como solicito una beca,becas,[SEMILLA] Información de becas pendiente de verificar en el sitio oficial.,https://www.upq.mx
+¿Qué apoyos económicos ofrece la universidad?,becas,[SEMILLA] Información de becas pendiente de verificar en el sitio oficial.,https://www.upq.mx
+requisitos para una beca de excelencia,becas,[SEMILLA] Información de becas pendiente de verificar en el sitio oficial.,https://www.upq.mx
+quiero una veca para estudiar,becas,[SEMILLA] Información de becas pendiente de verificar en el sitio oficial.,https://www.upq.mx
+Convocatoria de becas del cuatrimestre,becas,[SEMILLA] Información de becas pendiente de verificar en el sitio oficial.,https://www.upq.mx
+¿Cuándo inicia el cuatrimestre?,calendario_escolar,[SEMILLA] Calendario pendiente de verificar en el sitio oficial.,https://www.upq.mx
+fechas de vacaciones y dias inhabiles,calendario_escolar,[SEMILLA] Calendario pendiente de verificar en el sitio oficial.,https://www.upq.mx
+¿Cuándo terminan las clases?,calendario_escolar,[SEMILLA] Calendario pendiente de verificar en el sitio oficial.,https://www.upq.mx
+calendario escolar 2026,calendario_escolar,[SEMILLA] Calendario pendiente de verificar en el sitio oficial.,https://www.upq.mx
+cuando son los examenes finales,calendario_escolar,[SEMILLA] Calendario pendiente de verificar en el sitio oficial.,https://www.upq.mx
+que dia regresamos de vacaciones,calendario_escolar,[SEMILLA] Calendario pendiente de verificar en el sitio oficial.,https://www.upq.mx
+beca para estudiantes de bajos recursos,becas,[SEMILLA] Información de becas pendiente de verificar en el sitio oficial.,https://www.upq.mx
+¿Cómo puedo obtener una beca en la UPQ?,becas,[SEMILLA] Información de becas pendiente de verificar en el sitio oficial.,https://www.upq.mx
+que becas hay,becas,[SEMILLA] Información de becas pendiente de verificar en el sitio oficial.,https://www.upq.mx
+necesito apoyo economico para seguir estudiando,becas,[SEMILLA] Información de becas pendiente de verificar en el sitio oficial.,https://www.upq.mx
+¿Qué promedio se necesita para tener beca?,becas,[SEMILLA] Información de becas pendiente de verificar en el sitio oficial.,https://www.upq.mx
+beca de transporte,becas,[SEMILLA] Información de becas pendiente de verificar en el sitio oficial.,https://www.upq.mx
+Soy alumno de primer cuatrimestre y quiero saber si puedo pedir beca,becas,[SEMILLA] Información de becas pendiente de verificar en el sitio oficial.,https://www.upq.mx
+documentos para solicitar beca,becas,[SEMILLA] Información de becas pendiente de verificar en el sitio oficial.,https://www.upq.mx
+¿Hasta cuándo puedo registrarme para una beca?,becas,[SEMILLA] Información de becas pendiente de verificar en el sitio oficial.,https://www.upq.mx
+apoyos para estudiantes,becas,[SEMILLA] Información de becas pendiente de verificar en el sitio oficial.,https://www.upq.mx
+beka academica,becas,[SEMILLA] Información de becas pendiente de verificar en el sitio oficial.,https://www.upq.mx
+¿La universidad da becas de manutención?,becas,[SEMILLA] Información de becas pendiente de verificar en el sitio oficial.,https://www.upq.mx
+como me inscribo a la beca,becas,[SEMILLA] Información de becas pendiente de verificar en el sitio oficial.,https://www.upq.mx
+informes sobre becas y programas de apoyo,becas,[SEMILLA] Información de becas pendiente de verificar en el sitio oficial.,https://www.upq.mx
 "hola","saludo","¡Hola! Soy el asistente de la UPQ. Puedo ayudarte con admisión, becas, calendario escolar, costos, reinscripción, servicio social, biblioteca, titulación, movilidad e idiomas. ¿Qué necesitas?","interno"
 "buenas","saludo","¡Hola! Soy el asistente de la UPQ. Puedo ayudarte con admisión, becas, calendario escolar, costos, reinscripción, servicio social, biblioteca, titulación, movilidad e idiomas. ¿Qué necesitas?","interno"
 "buenos días","saludo","¡Hola! Soy el asistente de la UPQ. Puedo ayudarte con admisión, becas, calendario escolar, costos, reinscripción, servicio social, biblioteca, titulación, movilidad e idiomas. ¿Qué necesitas?","interno"
