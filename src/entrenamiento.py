@@ -18,7 +18,7 @@ def main() -> None:
     X_texto = corpus["texto"].map(limpiar_texto)
     y = corpus["intencion"]
 
-    vectorizador = TfidfVectorizer(analyzer="char_wb", ngram_range=(3, 5))
+    vectorizador = TfidfVectorizer(analyzer="char_wb", ngram_range=(3, 5), sublinear_tf=True)
     X = vectorizador.fit_transform(X_texto)
 
     modelo = LogisticRegression(max_iter=1000, random_state=42)
