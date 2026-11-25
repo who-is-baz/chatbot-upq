@@ -7,7 +7,7 @@ Plataforma de asistencia informativa para la Universidad Politécnica de Querét
 
 ## Integrantes
 - Ricardo Sebastián Balderas González (Baz)
-- Fernanda _(apellidos)_
+- Fernanda Juárez García
 
 ## Qué lo hace más que un chatbot
 
@@ -82,7 +82,7 @@ app.py                       interfaz Streamlit
 python -m venv .venv
 source .venv/bin/activate        # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
-python src/entrenamiento.py      # genera models/*.pkl
+python -m src.entrenamiento      # genera models/*.pkl
 streamlit run app.py
 ```
 
@@ -171,7 +171,7 @@ El proyecto se construye por niveles. Un nivel no empieza hasta que el anterior 
 
 ## Flujo de Git
 
-- `main` solo recibe cambios por Pull Request con 1 aprobación del otro.
+- `main` recibe cambios por Pull Request con Squash and merge; no se exige aprobación y cada quien mergea lo suyo.
 - Ramas `baz/<tema>` y `fernanda/<tema>`; PRs pequeños y frecuentes.
 - `git pull` de `main` antes de empezar cada sesión.
 - Cada quien edita únicamente sus archivos (tablas de arriba).
