@@ -10,10 +10,33 @@ RAIZ = Path(__file__).resolve().parent
 LOGO = RAIZ / "assets" / "img" / "institucion" / "logo_upq.svg"
 AVATARES = {"assistant": str(RAIZ / "assets" / "img" / "institucion" / "avatar_polo.png"),
             "user": ":material/person:"}
+# Redes oficiales de la UPQ: (nombre, enlace, ícono de Font Awesome Free en assets/img/redes/).
+REDES = [
+    ("Facebook", "https://www.facebook.com/UPQoficial", "facebook-f"),
+    ("X", "https://x.com/UPQoficial", "x-twitter"),
+    ("Instagram", "https://www.instagram.com/soyupq", "instagram"),
+    ("TikTok", "https://www.tiktok.com/@upqoficial", "tiktok"),
+    ("LinkedIn", "https://www.linkedin.com/school/upq", "linkedin-in"),
+]
 
 st.set_page_config(page_title="Asistente UPQ", page_icon=str(LOGO))
 st.logo(str(LOGO), size="large")
 st.markdown(f"<style>{(RAIZ / 'assets' / 'estilos.css').read_text(encoding='utf-8')}</style>",
+            unsafe_allow_html=True)
+
+
+def iconos_redes() -> str:
+    """Enlaces a las redes con su ícono SVG en línea (el color lo toma del CSS)."""
+    enlaces = []
+    for nombre, url, icono in REDES:
+        svg = (RAIZ / "assets" / "img" / "redes" / f"{icono}.svg").read_text(encoding="utf-8")
+        svg = svg.replace("<svg ", '<svg fill="currentColor" aria-hidden="true" ', 1)
+        enlaces.append(f'<a href="{url}" target="_blank" rel="noopener" title="{nombre}" '
+                       f'aria-label="{nombre} de la UPQ">{svg}</a>')
+    return "".join(enlaces)
+
+
+st.markdown(f'<nav class="upq-redes" aria-label="Redes sociales de la UPQ">{iconos_redes()}</nav>',
             unsafe_allow_html=True)
 
 

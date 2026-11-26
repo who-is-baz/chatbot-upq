@@ -102,3 +102,29 @@ header[data-testid="stHeader"] { background: transparent; }
   .upq-nombre { font-size: .8rem; }
   .upq-titulo { font-size: 2rem; }
 }
+
+/* ---------------------------------------------------------------- barra flotante de redes */
+.upq-redes {
+  position: fixed;
+  right: 0;
+  top: 32%;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  background: var(--upq-azul-trans);
+  border-radius: 10px 0 0 10px;
+  box-shadow: var(--upq-sombra);
+  overflow: hidden;
+}
+.upq-redes a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  color: #FFFFFF !important;
+  transition: background .2s;
+}
+.upq-redes a:hover { background: var(--upq-rojo); }
+.upq-redes svg { width: 20px; height: 20px; }
+@media (max-width: 900px) { .upq-redes { display: none; } }
