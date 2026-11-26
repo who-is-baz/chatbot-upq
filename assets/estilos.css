@@ -197,3 +197,48 @@ header[data-testid="stHeader"] { background: transparent; }
   max-height: 360px;
   object-fit: contain;
 }
+
+/* ---------------------------------------------------------------- preguntas sugeridas como tarjetas */
+.upq-tarjetas-titulo {
+  margin: 8px 0 4px;
+  font-family: "Barlow Condensed", "Nunito Sans", sans-serif;
+  font-style: italic;
+  font-weight: 800;
+  font-size: 1.4rem;
+  text-transform: uppercase;
+  color: var(--upq-azul);
+}
+.st-key-tarjetas .stButton > button {
+  min-height: 64px;
+  justify-content: flex-start;
+  text-align: left;
+  padding: 12px 18px;
+  background: #FFFFFF;
+  border: 1px solid #D6DEEA;
+  border-left: 5px solid var(--upq-rojo);
+  border-radius: 10px;
+  box-shadow: var(--upq-sombra);
+  color: var(--upq-azul);
+}
+.st-key-tarjetas .stButton > button:hover {
+  background: var(--upq-azul);
+  border-color: var(--upq-azul);
+  border-left-color: var(--upq-rojo);
+  color: #FFFFFF;
+}
+.st-key-sugeridas_sidebar .stButton > button {
+  justify-content: flex-start;
+  text-align: left;
+  background: #FFFFFF;
+  border: none;
+  border-left: 4px solid var(--upq-rojo);
+  color: var(--upq-azul);
+}
+.st-key-sugeridas_sidebar .stButton > button:hover {
+  background: var(--upq-rojo);
+  color: #FFFFFF;
+}
+.st-key-tarjetas .stButton > button > div,
+.st-key-sugeridas_sidebar .stButton > button > div { width: 100%; justify-content: flex-start; }
+.st-key-tarjetas .stButton p,
+.st-key-sugeridas_sidebar .stButton p { text-align: left; }
