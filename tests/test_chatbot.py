@@ -85,3 +85,36 @@ def test_sin_fragmento_usa_respuesta_corta(bot):
     r = bot.responder_intencion("saludo", "hola")
     assert r["fragmento"] is None
     assert r["respuesta"] == bot.respuestas["saludo"]["respuesta"]
+
+
+# ---------------------------------------------------------------- registro
+def leer_registro(ruta):
+    import json
+    return [json.loads(linea) for linea in ruta.read_text(encoding="utf-8").splitlines()]
+
+
+def test_cada_consulta_queda_registrada(tmp_path):
+    ruta = tmp_path / "consultas.jsonl"
+    bot = ChatbotUPQ(ruta_registro=ruta)
+    bot.responder("hay becas")
+    bot.responder("")
+    filas = leer_registro(ruta)
+    assert len(filas) == 2
+    assert filas[0]["texto"] == "hay becas" and "latencia_ms" in filas[0]
+    assert filas[1]["origen"] == "guardrail"
+
+
+def test_registro_no_guarda_datos_personales(tmp_path):
+    ruta = tmp_path / "consultas.jsonl"
+    ChatbotUPQ(ruta_registro=ruta).responder("mi curp es GOMA850101HQTRRL09")
+    fila = leer_registro(ruta)[0]
+    assert fila["texto"] is None and fila["motivo"] == "datos_personales"
+
+
+def test_voto_queda_registrado(tmp_path):
+    ruta = tmp_path / "consultas.jsonl"
+    bot = ChatbotUPQ(ruta_registro=ruta)
+    resultado = bot.responder("hay becas")
+    assert bot.registrar_voto("hay becas", resultado, util=False)
+    voto = leer_registro(ruta)[-1]
+    assert voto["util"] is False and voto["intencion"] == resultado["intencion"]

@@ -11,7 +11,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from src import guardrails, herramientas, recuperador, router
+from src import guardrails, herramientas, recuperador, registro, router
 from src.cache import Cache
 from src.preprocesamiento import limpiar_texto
 
@@ -23,7 +23,9 @@ NIVEL_RESPUESTA, NIVEL_ACLARACION, NIVEL_FALLBACK = "respuesta", "aclaracion", "
 
 
 class ChatbotUPQ:
-    def __init__(self, raiz: Path = RAIZ):
+    def __init__(self, raiz: Path = RAIZ, ruta_registro: Path | None = None):
+        # Archivo donde se registran las consultas y los votos (sin datos personales).
+        self.ruta_registro = ruta_registro or registro.RUTA_REGISTRO
         umbrales = json.loads((raiz / "models" / "config.json").read_text(encoding="utf-8"))
         self.umbral_alto = float(umbrales["umbral_alto"])
         self.umbral_bajo = float(umbrales["umbral_bajo"])
@@ -42,13 +44,13 @@ class ChatbotUPQ:
 
         ok, texto, motivo = guardrails.validar_entrada(texto)
         if not ok:
-            return self._cerrar(self._guardrail(motivo), inicio)
+            return self._cerrar(self._guardrail(motivo), inicio, texto)
 
         clave = limpiar_texto(texto)
         guardado = self.cache.get(clave)
         if guardado is not None:
             guardado["origen"] = ORIGEN_CACHE
-            return self._cerrar(guardado, inicio)
+            return self._cerrar(guardado, inicio, texto)
 
         prediccion = router.predecir(clave)
         intencion, confianza, top3 = prediccion["intencion"], prediccion["confianza"], prediccion["top3"]
@@ -66,14 +68,21 @@ class ChatbotUPQ:
         # Solo se guardan respuestas del modelo que no cambian con el día (las del calendario sí cambian).
         elif resultado["origen"] == ORIGEN_MODELO and resultado["herramienta"] != "calendario":
             self.cache.set(clave, resultado)
-        return self._cerrar(resultado, inicio)
+        return self._cerrar(resultado, inicio, texto)
 
     def responder_intencion(self, intencion: str, texto: str = "") -> dict:
         """Contesta una intención elegida por el usuario en el "¿Quisiste decir…?"."""
         inicio = time.perf_counter()
         resultado = self._contestar(texto, intencion)
         resultado.update(intencion=intencion, confianza=1.0, top3=[(intencion, 1.0)])
-        return self._cerrar(resultado, inicio)
+        return self._cerrar(resultado, inicio, texto)
+
+    def registrar_voto(self, texto: str, resultado: dict, util: bool) -> bool:
+        """Registra el 👍 (util=True) o 👎 (util=False) de una respuesta. Alimenta el reentrenamiento."""
+        return registro.registrar({
+            "texto": texto, "intencion": resultado.get("intencion"), "confianza": resultado.get("confianza"),
+            "origen": resultado.get("origen"), "util": util,
+        }, self.ruta_registro)
 
     def etiqueta(self, intencion: str) -> str:
         return self.config["etiquetas"].get(intencion, intencion.replace("_", " ").capitalize())
@@ -120,7 +129,8 @@ class ChatbotUPQ:
         resultado.update(extra)
         return resultado
 
-    @staticmethod
-    def _cerrar(resultado: dict, inicio: float) -> dict:
+    def _cerrar(self, resultado: dict, inicio: float, texto: str = "") -> dict:
+        """Mide la latencia y registra la consulta (registro.py quita los datos personales)."""
         resultado["latencia_ms"] = round((time.perf_counter() - inicio) * 1000, 1)
+        registro.registrar({"texto": texto, **resultado}, self.ruta_registro)
         return resultado
