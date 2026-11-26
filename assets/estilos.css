@@ -178,3 +178,22 @@ header[data-testid="stHeader"] { background: transparent; }
 }
 .upq-pie-redes a:hover { background: var(--upq-rojo); text-decoration: none; }
 .upq-pie-redes svg { width: 16px; height: 16px; }
+
+/* ---------------------------------------------------------------- fuente e imagen de cada respuesta */
+.upq-fuente {
+  margin-top: 4px;
+  padding-top: 8px;
+  border-top: 1px dashed #D6DEEA;
+  color: #5B6472;
+  font-size: .8rem;
+}
+.upq-fuente strong { color: var(--upq-azul); }
+.upq-fuente a { color: var(--upq-rojo) !important; font-weight: 700; text-decoration: none; }
+.upq-fuente a:hover { text-decoration: underline; }
+.upq-vigencia { display: block; margin-top: 2px; font-style: italic; }
+[data-testid="stChatMessage"] [data-testid="stImage"] img {
+  border-radius: 10px;
+  box-shadow: var(--upq-sombra);
+  max-height: 360px;
+  object-fit: contain;
+}
