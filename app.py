@@ -20,6 +20,8 @@ REDES = [
     ("TikTok", "https://www.tiktok.com/@upqoficial", "tiktok"),
     ("LinkedIn", "https://www.linkedin.com/school/upq", "linkedin-in"),
 ]
+AVISO = ("Proyecto escolar de Fundamentos de IA. No es un canal oficial de la UPQ; "
+         "verifica la información en www.upq.mx.")
 # Enlaces del pie de página, iguales a los del pie de upq.mx.
 ENLACES_PIE = {
     "Institución": [("Historia", "https://www.upq.mx/Institucion/Historia/"),
@@ -66,7 +68,8 @@ estado.setdefault("votos", {})        # índice del mensaje -> "👍" | "👎"
 # ---------------------------------------------------------------- barra lateral
 with st.sidebar:
     st.header("Asistente UPQ")
-    st.caption("Información oficial de la Universidad Politécnica de Querétaro. "
+    st.markdown(f'<div class="upq-aviso">{AVISO}</div>', unsafe_allow_html=True)
+    st.caption("Respondo con información tomada de fuentes oficiales de la Universidad Politécnica de Querétaro. "
                "No proceses datos personales: no escribas tu matrícula, CURP ni teléfono.")
     modo_tecnico = st.toggle("Modo técnico", help="Muestra intención, confianza, top-3, origen y latencia.")
     if modo_tecnico:
@@ -209,6 +212,7 @@ def pie_de_pagina() -> str:
   </div>
   {columnas}
   <div class="upq-pie-col"><h4>Redes sociales</h4><div class="upq-pie-redes">{iconos_redes()}</div></div>
+  <div class="upq-pie-aviso">{AVISO}</div>
 </footer>
 """
 
