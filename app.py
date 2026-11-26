@@ -85,9 +85,11 @@ def mostrar_respuesta(idx: int, msg: dict) -> None:
             c1, c2, _ = st.columns([1, 1, 8])
             if c1.button("👍", key=f"si_{idx}"):
                 estado.votos[idx] = "👍"
+                bot.registrar_voto(msg.get("pregunta", ""), r, util=True)
                 st.rerun()
             if c2.button("👎", key=f"no_{idx}"):
                 estado.votos[idx] = "👎"
+                bot.registrar_voto(msg.get("pregunta", ""), r, util=False)
                 st.rerun()
 
     if modo_tecnico:
