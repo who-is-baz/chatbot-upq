@@ -57,6 +57,29 @@ toda la lógica vive en `src/`.
 | `requirements.txt` y README paso a paso | este archivo y `requirements.txt` |
 | Modelos entrenados | `models/modelo.pkl`, `models/vectorizador.pkl` |
 
+## Interfaz
+
+![Interfaz del Asistente UPQ](docs/capturas/interfaz_inicio.png)
+
+La interfaz (`app.py`, Streamlit) sigue la identidad visual de [upq.mx](https://www.upq.mx):
+
+- **Colores** tomados de la hoja de estilos del sitio: azul `#002D72` y rojo `#BA0C2F` (`.streamlit/config.toml`).
+- **Tipografías** de Google Fonts: Nunito Sans (la misma del sitio) para el texto y Barlow Condensed
+  ExtraBold itálica para los títulos.
+- **Encabezado** con el logo y "UNIVERSIDAD **POLITÉCNICA** DE QUERÉTARO", barra flotante de redes
+  y pie de página con contacto, enlaces oficiales y redes.
+- **Cada respuesta** muestra la imagen del fragmento (si la tiene), la fuente oficial como enlace y su vigencia.
+- **Preguntas sugeridas** como tarjetas, control de tamaño de texto, modo técnico y 👍/👎.
+- Los estilos viven en `assets/estilos.css`; los íconos de redes son de Font Awesome Free (CC BY 4.0),
+  guardados en `assets/img/redes/` para que funcionen sin internet.
+
+> **Aviso:** proyecto escolar de Fundamentos de IA. No es un canal oficial de la UPQ; la interfaz lo
+> indica en el sidebar y en el pie de página.
+
+| Respuesta con imagen y fuente | Celular |
+|---|---|
+| ![Respuesta](docs/capturas/interfaz_respuesta.png) | ![Celular](docs/capturas/interfaz_movil.png) |
+
 ## Estructura
 
 ```
@@ -74,6 +97,8 @@ scripts/                     unir_corpus.py, reentrenar_desde_feedback.py, resum
 tests/                       pruebas con pytest
 docs/                        imágenes de métricas y documentación
 app.py                       interfaz Streamlit
+.streamlit/config.toml       tema con los colores institucionales
+assets/                      estilos.css, logo, mascota, íconos de redes e imágenes de los fragmentos
 ```
 
 ## Instalación y ejecución _(se completa y se verifica desde un clon limpio el 28 de nov.)_

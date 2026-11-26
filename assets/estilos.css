@@ -1,0 +1,280 @@
+/* Estilos del Asistente UPQ. Colores tomados de la hoja de estilos de upq.mx. */
+:root {
+  --upq-azul: #002D72;
+  --upq-azul-claro: #EEF2F8;
+  --upq-azul-trans: rgba(0, 10, 87, .8);
+  --upq-rojo: #BA0C2F;
+  --upq-texto: #1F2937;
+  --upq-sombra: 0 2px 10px rgba(0, 45, 114, .10);
+}
+
+/* Barra superior de Streamlit casi opaca: el logo no se encima con el texto al hacer scroll. */
+header[data-testid="stHeader"] {
+  background: rgba(255, 255, 255, .96);
+  box-shadow: 0 1px 6px rgba(0, 45, 114, .08);
+}
+
+/* ---------------------------------------------------------------- burbujas de chat */
+[data-testid="stChatMessage"] {
+  border-radius: 14px;
+  padding: 14px 18px;
+  margin-bottom: 10px;
+}
+/* Asistente: tarjeta blanca con franja roja a la izquierda. */
+[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarAssistant"]),
+[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarImage"]) {
+  background: #FFFFFF;
+  border: 1px solid #D6DEEA;
+  border-left: 5px solid var(--upq-rojo);
+  box-shadow: var(--upq-sombra);
+}
+/* Usuario: burbuja azul institucional. */
+[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarUser"]),
+[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarCustom"]) {
+  background: var(--upq-azul);
+  color: #FFFFFF;
+}
+[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarUser"]) p,
+[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarCustom"]) p { color: #FFFFFF; }
+
+/* Avatares: Polo para el asistente; ícono blanco sobre rojo para el usuario. */
+[data-testid="stChatMessageAvatarImage"] { width: 2.6rem; height: 2.6rem; border-radius: 50%; }
+[data-testid="stChatMessageAvatarCustom"] { background: var(--upq-rojo); color: #FFFFFF; border-radius: 50%; }
+
+/* ---------------------------------------------------------------- botones */
+.stButton > button {
+  border-radius: 8px;
+  border: 1.5px solid var(--upq-azul);
+  color: var(--upq-azul);
+  font-weight: 700;
+  transition: background .2s, color .2s, border-color .2s;
+}
+.stButton > button:hover {
+  background: var(--upq-rojo);
+  border-color: var(--upq-rojo);
+  color: #FFFFFF;
+}
+
+/* ---------------------------------------------------------------- caja de texto */
+[data-testid="stChatInput"] {
+  border: 2px solid var(--upq-azul);
+  border-radius: 12px;
+}
+[data-testid="stChatInput"]:focus-within { border-color: var(--upq-rojo); }
+
+/* ---------------------------------------------------------------- sidebar */
+[data-testid="stSidebar"] .stButton > button {
+  border-color: rgba(255, 255, 255, .55);
+  color: #FFFFFF;
+  background: transparent;
+}
+[data-testid="stSidebar"] .stButton > button:hover {
+  background: var(--upq-rojo);
+  border-color: var(--upq-rojo);
+}
+
+/* ---------------------------------------------------------------- encabezado */
+.upq-encabezado {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 6px 0 18px;
+  margin-bottom: 18px;
+  border-bottom: 3px solid var(--upq-azul);
+}
+.upq-encabezado img { width: 86px; height: 86px; flex-shrink: 0; }
+.upq-nombre {
+  color: var(--upq-azul);
+  font-weight: 800;
+  font-size: 1.05rem;
+  letter-spacing: .06em;
+}
+.upq-nombre span { color: var(--upq-rojo); }
+.upq-titulo {
+  font-family: "Barlow Condensed", "Nunito Sans", sans-serif;
+  font-style: italic;
+  font-weight: 800;
+  font-size: 2.6rem;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--upq-azul);
+}
+.upq-titulo span { color: var(--upq-rojo); }
+@media (max-width: 640px) {
+  .upq-encabezado img { width: 60px; height: 60px; }
+  .upq-nombre { font-size: .8rem; }
+  .upq-titulo { font-size: 2rem; }
+}
+
+/* ---------------------------------------------------------------- barra flotante de redes */
+.upq-redes {
+  position: fixed;
+  right: 0;
+  top: 32%;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  background: var(--upq-azul-trans);
+  border-radius: 10px 0 0 10px;
+  box-shadow: var(--upq-sombra);
+  overflow: hidden;
+}
+.upq-redes a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  color: #FFFFFF !important;
+  transition: background .2s;
+}
+.upq-redes a:hover { background: var(--upq-rojo); }
+.upq-redes svg { width: 20px; height: 20px; }
+@media (max-width: 900px) { .upq-redes { display: none; } }
+
+/* ---------------------------------------------------------------- pie de página */
+.upq-pie {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 28px;
+  margin-top: 48px;
+  padding: 36px 32px;
+  background: var(--upq-azul);
+  border-radius: 14px;
+  color: #FFFFFF;
+}
+.upq-pie h4 {
+  position: relative;
+  margin: 0 0 22px;
+  padding: 0;
+  color: #FFFFFF;
+  font-family: "Nunito Sans", sans-serif;
+  font-size: .95rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+/* Línea roja bajo cada título, como en upq.mx. */
+.upq-pie h4::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -10px;
+  width: 60px;
+  height: 2px;
+  background: var(--upq-rojo);
+}
+.upq-pie p { margin: 0 0 6px; color: #DCE3EF; font-size: .9rem; }
+.upq-pie ul { list-style: none; margin: 0; padding: 0; }
+.upq-pie li { margin: 0 0 8px; }
+.upq-pie a { color: #DCE3EF !important; text-decoration: none; font-size: .9rem; }
+.upq-pie a:hover { color: #FFFFFF !important; text-decoration: underline; }
+.upq-pie-redes { display: flex; flex-wrap: wrap; gap: 8px; }
+.upq-pie-redes a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .12);
+  color: #FFFFFF !important;
+}
+.upq-pie-redes a:hover { background: var(--upq-rojo); text-decoration: none; }
+.upq-pie-redes svg { width: 16px; height: 16px; }
+
+/* ---------------------------------------------------------------- fuente e imagen de cada respuesta */
+.upq-fuente {
+  margin-top: 4px;
+  padding-top: 8px;
+  border-top: 1px dashed #D6DEEA;
+  color: #5B6472;
+  font-size: .8rem;
+}
+.upq-fuente strong { color: var(--upq-azul); }
+.upq-fuente a { color: var(--upq-rojo) !important; font-weight: 700; text-decoration: none; }
+.upq-fuente a:hover { text-decoration: underline; }
+.upq-vigencia { display: block; margin-top: 2px; font-style: italic; }
+[data-testid="stChatMessage"] [data-testid="stImage"] img {
+  border-radius: 10px;
+  box-shadow: var(--upq-sombra);
+  max-height: 360px;
+  object-fit: contain;
+}
+
+/* ---------------------------------------------------------------- preguntas sugeridas como tarjetas */
+.upq-tarjetas-titulo {
+  margin: 8px 0 4px;
+  font-family: "Barlow Condensed", "Nunito Sans", sans-serif;
+  font-style: italic;
+  font-weight: 800;
+  font-size: 1.4rem;
+  text-transform: uppercase;
+  color: var(--upq-azul);
+}
+.st-key-tarjetas .stButton > button {
+  min-height: 64px;
+  justify-content: flex-start;
+  text-align: left;
+  padding: 12px 18px;
+  background: #FFFFFF;
+  border: 1px solid #D6DEEA;
+  border-left: 5px solid var(--upq-rojo);
+  border-radius: 10px;
+  box-shadow: var(--upq-sombra);
+  color: var(--upq-azul);
+}
+.st-key-tarjetas .stButton > button:hover {
+  background: var(--upq-azul);
+  border-color: var(--upq-azul);
+  border-left-color: var(--upq-rojo);
+  color: #FFFFFF;
+}
+.st-key-sugeridas_sidebar .stButton > button {
+  justify-content: flex-start;
+  text-align: left;
+  background: #FFFFFF;
+  border: none;
+  border-left: 4px solid var(--upq-rojo);
+  color: var(--upq-azul);
+}
+.st-key-sugeridas_sidebar .stButton > button:hover {
+  background: var(--upq-rojo);
+  color: #FFFFFF;
+}
+.st-key-tarjetas .stButton > button > div,
+.st-key-sugeridas_sidebar .stButton > button > div { width: 100%; justify-content: flex-start; }
+.st-key-tarjetas .stButton p,
+.st-key-sugeridas_sidebar .stButton p { text-align: left; }
+
+/* ---------------------------------------------------------------- aviso de proyecto escolar */
+.upq-aviso {
+  margin: 4px 0 10px;
+  padding: 10px 12px;
+  border-left: 4px solid var(--upq-rojo);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, .12);
+  color: #FFFFFF;
+  font-size: .82rem;
+  font-weight: 700;
+}
+.upq-pie-aviso {
+  grid-column: 1 / -1;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, .2);
+  color: #FFFFFF;
+  font-size: .85rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+/* ---------------------------------------------------------------- accesibilidad: tamaño del texto */
+/* Solo los botones de opción (tienen aria-checked); el ícono de ayuda queda igual. */
+[data-testid="stSidebar"] [data-testid="stButtonGroup"] button[aria-checked] {
+  background: #FFFFFF;
+  color: var(--upq-azul);
+  font-weight: 800;
+}
+[data-testid="stSidebar"] [data-testid="stButtonGroup"] button[aria-checked="true"] {
+  background: var(--upq-rojo);
+  color: #FFFFFF;
+}
