@@ -1,0 +1,22 @@
+# Tema con los colores institucionales de upq.mx (tomados de su hoja de estilos):
+# azul #002D72 (pie de página, títulos) y rojo #BA0C2F (acentos).
+[theme]
+base = "light"
+primaryColor = "#BA0C2F"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#EEF2F8"
+textColor = "#1F2937"
+linkColor = "#002D72"
+font = "Nunito Sans:https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,wght@0,400;0,700;0,800;1,400&display=swap"
+headingFont = "Barlow Condensed:https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@1,800&display=swap"
+borderColor = "#D6DEEA"
+
+[theme.sidebar]
+backgroundColor = "#002D72"
+secondaryBackgroundColor = "#0A3D8C"
+textColor = "#FFFFFF"
+linkColor = "#FFFFFF"
+borderColor = "#1B4C99"
+
+[client]
+toolbarMode = "minimal"
