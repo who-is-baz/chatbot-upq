@@ -263,3 +263,15 @@ header[data-testid="stHeader"] { background: transparent; }
   font-weight: 700;
   text-align: center;
 }
+
+/* ---------------------------------------------------------------- accesibilidad: tamaño del texto */
+/* Solo los botones de opción (tienen aria-checked); el ícono de ayuda queda igual. */
+[data-testid="stSidebar"] [data-testid="stButtonGroup"] button[aria-checked] {
+  background: #FFFFFF;
+  color: var(--upq-azul);
+  font-weight: 800;
+}
+[data-testid="stSidebar"] [data-testid="stButtonGroup"] button[aria-checked="true"] {
+  background: var(--upq-rojo);
+  color: #FFFFFF;
+}
