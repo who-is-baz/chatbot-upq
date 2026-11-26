@@ -19,7 +19,7 @@ header[data-testid="stHeader"] { background: transparent; }
 }
 /* Asistente: tarjeta blanca con franja roja a la izquierda. */
 [data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarAssistant"]),
-[data-testid="stChatMessage"]:has(img[alt="assistant avatar"]) {
+[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarImage"]) {
   background: #FFFFFF;
   border: 1px solid #D6DEEA;
   border-left: 5px solid var(--upq-rojo);
@@ -27,12 +27,16 @@ header[data-testid="stHeader"] { background: transparent; }
 }
 /* Usuario: burbuja azul institucional. */
 [data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarUser"]),
-[data-testid="stChatMessage"]:has(img[alt="user avatar"]) {
+[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarCustom"]) {
   background: var(--upq-azul);
   color: #FFFFFF;
 }
 [data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarUser"]) p,
-[data-testid="stChatMessage"]:has(img[alt="user avatar"]) p { color: #FFFFFF; }
+[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarCustom"]) p { color: #FFFFFF; }
+
+/* Avatares: Polo para el asistente; ícono blanco sobre rojo para el usuario. */
+[data-testid="stChatMessageAvatarImage"] { width: 2.6rem; height: 2.6rem; border-radius: 50%; }
+[data-testid="stChatMessageAvatarCustom"] { background: var(--upq-rojo); color: #FFFFFF; border-radius: 50%; }
 
 /* ---------------------------------------------------------------- botones */
 .stButton > button {
