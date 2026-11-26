@@ -1,7 +1,7 @@
-"""Orquestador: une guardrails, router y recuperador en una sola llamada.
+"""Orquestador: une guardrails, caché, router, herramientas y recuperador en una sola llamada.
 
 Flujo y 3 niveles según la confianza del router (umbrales en models/config.json):
-  confianza >= umbral_alto           -> respuesta (fragmento oficial o respuesta corta)
+  confianza >= umbral_alto           -> respuesta (herramienta, fragmento oficial o respuesta corta)
   umbral_bajo <= confianza < alto    -> "¿Quisiste decir…?" con el top-3
   confianza < umbral_bajo            -> fallback con datos de contacto
 """
@@ -11,7 +11,8 @@ from pathlib import Path
 
 import pandas as pd
 
-from src import guardrails, recuperador, router
+from src import guardrails, herramientas, recuperador, router
+from src.cache import Cache
 from src.preprocesamiento import limpiar_texto
 
 RAIZ = Path(__file__).resolve().parent.parent
@@ -32,6 +33,7 @@ class ChatbotUPQ:
         # Una sola respuesta por intención: se toma la primera que aparezca.
         cortas = corpus.drop_duplicates("intencion").set_index("intencion")
         self.respuestas = cortas[["respuesta", "fuente"]].to_dict("index")
+        self.cache = Cache(capacidad=128)
 
     # ------------------------------------------------------------------ API pública
     def responder(self, texto) -> dict:
@@ -42,7 +44,13 @@ class ChatbotUPQ:
         if not ok:
             return self._cerrar(self._guardrail(motivo), inicio)
 
-        prediccion = router.predecir(limpiar_texto(texto))
+        clave = limpiar_texto(texto)
+        guardado = self.cache.get(clave)
+        if guardado is not None:
+            guardado["origen"] = ORIGEN_CACHE
+            return self._cerrar(guardado, inicio)
+
+        prediccion = router.predecir(clave)
         intencion, confianza, top3 = prediccion["intencion"], prediccion["confianza"], prediccion["top3"]
 
         if confianza >= self.umbral_alto:
@@ -55,6 +63,9 @@ class ChatbotUPQ:
 
         if not guardrails.validar_salida(resultado["respuesta"]):
             resultado.update(self._guardrail("salida_invalida"))
+        # Solo se guardan respuestas del modelo que no cambian con el día (las del calendario sí cambian).
+        elif resultado["origen"] == ORIGEN_MODELO and resultado["herramienta"] != "calendario":
+            self.cache.set(clave, resultado)
         return self._cerrar(resultado, inicio)
 
     def responder_intencion(self, intencion: str, texto: str = "") -> dict:
@@ -72,6 +83,11 @@ class ChatbotUPQ:
         corta = self.respuestas.get(intencion)
         if corta is None:
             return self._fallback()
+        eleccion = herramientas.elegir(intencion, texto) if texto else None
+        if eleccion:
+            nombre, args = eleccion
+            return self._base(herramientas.ejecutar(nombre, **args), herramientas.FUENTES[nombre],
+                              ORIGEN_MODELO, NIVEL_RESPUESTA, herramienta=nombre)
         fragmentos = recuperador.buscar(texto, intencion, k=1) if texto else []
         if fragmentos:
             f = fragmentos[0]
@@ -99,7 +115,7 @@ class ChatbotUPQ:
         resultado = {
             "intencion": None, "confianza": 0.0, "top3": [],
             "respuesta": respuesta, "fuente": fuente, "es_fallback": es_fallback,
-            "origen": origen, "nivel": nivel, "fragmento": None, "sugerencias": [],
+            "origen": origen, "nivel": nivel, "fragmento": None, "herramienta": None, "sugerencias": [],
         }
         resultado.update(extra)
         return resultado

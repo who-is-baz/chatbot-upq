@@ -28,6 +28,10 @@ with st.sidebar:
     st.caption("Información oficial de la Universidad Politécnica de Querétaro. "
                "No proceses datos personales: no escribas tu matrícula, CURP ni teléfono.")
     modo_tecnico = st.toggle("Modo técnico", help="Muestra intención, confianza, top-3, origen y latencia.")
+    if modo_tecnico:
+        m = bot.cache.metricas()
+        st.caption(f"Caché: {m['aciertos']} aciertos de {m['aciertos'] + m['fallos']} consultas "
+                   f"({m['tasa_aciertos']:.0%}) · {m['tamano']}/{m['capacidad']} guardadas")
     st.subheader("Preguntas sugeridas")
     for i, pregunta in enumerate(bot.config["preguntas_sugeridas"]):
         if st.button(pregunta, key=f"sugerida_{i}", use_container_width=True):
@@ -51,6 +55,8 @@ def mostrar_tecnico(r: dict) -> None:
         if r["fragmento"]:
             f = r["fragmento"]
             st.write(f"**Fragmento:** {f['id']} — {f['titulo']} (similitud {f['similitud']:.2f})")
+        if r.get("herramienta"):
+            st.write(f"**Herramienta:** `{r['herramienta']}`")
         if r.get("motivo"):
             st.write(f"**Motivo del guardrail:** `{r['motivo']}`")
 

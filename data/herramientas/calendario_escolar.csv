@@ -1,0 +1,62 @@
+inicio,fin,evento,tema,cuatrimestre
+2026-08-10,2026-08-28,Reinscripciones ordinarias,reinscripcion,sep-dic 2026
+2026-09-01,2026-09-03,Reinscripciones extemporáneas,reinscripcion,sep-dic 2026
+2026-09-07,2026-09-07,Inicio de cuatrimestre (también nuevo ingreso),inicio,sep-dic 2026
+2026-09-07,2026-09-11,Alta y baja de asignaturas,alta_baja,sep-dic 2026
+2026-09-07,2026-09-09,Cambio de carrera,cambio_carrera,sep-dic 2026
+2026-09-10,2026-09-10,Fecha límite de pago de recursamiento,pago,sep-dic 2026
+2026-09-16,2026-09-16,Día no laborable,no_laborable,sep-dic 2026
+2026-09-25,2026-09-25,Fecha límite de pago de ETC,pago,sep-dic 2026
+2026-10-02,2026-10-02,Último día de baja temporal,baja,sep-dic 2026
+2026-10-05,2026-10-10,Evaluación y captura de calificación parcial,parcial,sep-dic 2026
+2026-11-02,2026-11-02,Día no laborable,no_laborable,sep-dic 2026
+2026-11-09,2026-11-14,Evaluación y captura de calificación parcial,parcial,sep-dic 2026
+2026-11-16,2026-11-16,Día no laborable,no_laborable,sep-dic 2026
+2026-11-17,2026-11-17,Inicia la solicitud de becas institucionales,becas,sep-dic 2026
+2026-12-04,2026-12-04,Último día de baja voluntaria,baja,sep-dic 2026
+2026-12-07,2026-12-11,Evaluación y captura de calificación parcial,parcial,sep-dic 2026
+2026-12-14,2026-12-16,Captura de calificación final e impresión de actas,final,sep-dic 2026
+2026-12-16,2026-12-16,Fin de cuatrimestre,fin,sep-dic 2026
+2026-12-21,2027-01-05,Periodo vacacional de invierno,vacaciones,ene-abr 2027
+2026-12-25,2026-12-25,Día no laborable,no_laborable,sep-dic 2026
+2027-01-01,2027-01-01,Día no laborable,no_laborable,ene-abr 2027
+2027-01-02,2027-01-10,Reinscripciones ordinarias,reinscripcion,ene-abr 2027
+2027-01-04,2027-01-15,Alta y baja de asignaturas,alta_baja,ene-abr 2027
+2027-01-06,2027-01-06,Día no laborable,no_laborable,ene-abr 2027
+2027-01-07,2027-01-07,Inicio de cuatrimestre,inicio,ene-abr 2027
+2027-01-07,2027-01-11,Cambio de carrera (7 8 y 11 de enero),cambio_carrera,ene-abr 2027
+2027-01-11,2027-01-13,Reinscripciones extemporáneas,reinscripcion,ene-abr 2027
+2027-01-14,2027-01-14,Fecha límite de pago de recursamiento,pago,ene-abr 2027
+2027-01-28,2027-01-28,Fecha límite de pago de ETC,pago,ene-abr 2027
+2027-02-01,2027-02-01,Día no laborable,no_laborable,ene-abr 2027
+2027-02-02,2027-02-06,Evaluación y captura de calificación parcial,parcial,ene-abr 2027
+2027-02-04,2027-02-04,Último día de baja temporal,baja,ene-abr 2027
+2027-03-08,2027-03-13,Evaluación y captura de calificación parcial,parcial,ene-abr 2027
+2027-03-15,2027-03-15,Día no laborable,no_laborable,ene-abr 2027
+2027-03-16,2027-03-16,Inicia la solicitud de becas institucionales,becas,ene-abr 2027
+2027-03-25,2027-03-26,Días no laborables,no_laborable,ene-abr 2027
+2027-03-29,2027-04-03,Periodo vacacional de Semana Santa,vacaciones,ene-abr 2027
+2027-04-09,2027-04-09,Último día de baja voluntaria,baja,ene-abr 2027
+2027-04-12,2027-04-17,Evaluación y captura de calificación parcial,parcial,ene-abr 2027
+2027-04-19,2027-04-23,Captura de calificación final e impresión de actas,final,ene-abr 2027
+2027-04-23,2027-04-23,Fin de cuatrimestre,fin,ene-abr 2027
+2027-04-24,2027-04-28,Reinscripciones ordinarias,reinscripcion,may-ago 2027
+2027-05-01,2027-05-01,Día no laborable,no_laborable,may-ago 2027
+2027-05-03,2027-05-03,Inicio de cuatrimestre,inicio,may-ago 2027
+2027-05-03,2027-05-04,Reinscripciones extemporáneas,reinscripcion,may-ago 2027
+2027-05-03,2027-05-18,Alta y baja de asignaturas,alta_baja,may-ago 2027
+2027-05-05,2027-05-05,Día no laborable,no_laborable,may-ago 2027
+2027-05-10,2027-05-10,Día no laborable para madres trabajadoras,no_laborable,may-ago 2027
+2027-05-13,2027-05-13,Fecha límite de pago de recursamiento,pago,may-ago 2027
+2027-05-15,2027-05-15,Día no laborable,no_laborable,may-ago 2027
+2027-05-28,2027-05-28,Último día de baja temporal,baja,may-ago 2027
+2027-05-28,2027-05-28,Fecha límite de pago de ETC,pago,may-ago 2027
+2027-06-01,2027-06-05,Evaluación y captura de calificación parcial,parcial,may-ago 2027
+2027-07-05,2027-07-10,Evaluación y captura de calificación parcial,parcial,may-ago 2027
+2027-07-12,2027-07-12,Inicia la solicitud de becas institucionales,becas,may-ago 2027
+2027-07-30,2027-07-30,Último día de baja voluntaria,baja,may-ago 2027
+2027-08-02,2027-08-07,Evaluación y captura de calificación parcial,parcial,may-ago 2027
+2027-08-09,2027-08-13,Captura de calificación final e impresión de actas,final,may-ago 2027
+2027-08-13,2027-08-13,Fin de cuatrimestre,fin,may-ago 2027
+2027-08-16,2027-08-20,Periodo vacacional,vacaciones,may-ago 2027
+2027-08-23,2027-08-29,Reinscripciones ordinarias,reinscripcion,sep-dic 2027
