@@ -8,6 +8,10 @@
     "entrada_no_texto": "Solo puedo leer mensajes de texto. Escribe tu pregunta, por favor.",
     "entrada_vacia": "Parece que tu mensaje está vacío. Escribe tu pregunta, por favor.",
     "entrada_muy_larga": "Tu mensaje es muy largo. ¿Puedes resumir tu pregunta en una o dos frases?",
+    "datos_personales": "Por tu seguridad, no compartas datos personales como tu CURP, correo o teléfono. Escribe tu pregunta sin ellos y con gusto te ayudo.",
+    "lenguaje_ofensivo": "Prefiero que platiquemos con respeto. Si tienes una duda sobre la UPQ, escríbela y te ayudo.",
+    "inyeccion": "Solo puedo darte información oficial de la UPQ. ¿Qué te gustaría saber de la universidad?",
+    "otra_universidad": "Solo tengo información de la Universidad Politécnica de Querétaro. Para otras instituciones, consulta su sitio oficial.",
     "salida_invalida": "No pude armar una respuesta segura. Intenta preguntar de otra forma."
   },
   "etiquetas": {

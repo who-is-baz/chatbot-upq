@@ -54,6 +54,13 @@ def test_guardrail_rechaza_vacio(bot):
     assert r["origen"] == "guardrail" and r["motivo"] == "entrada_vacia"
 
 
+def test_cada_motivo_de_guardrail_tiene_mensaje(bot):
+    from src import guardrails
+    motivos = {v for k, v in vars(guardrails).items() if k.isupper() and isinstance(v, str) and v.islower()}
+    faltan = motivos - bot.config["motivos_guardrail"].keys()
+    assert not faltan, f"Faltan mensajes en config/asistente.json para: {faltan}"
+
+
 def test_umbrales_vienen_de_config(bot):
     assert 0 < bot.umbral_bajo < bot.umbral_alto <= 1
 
