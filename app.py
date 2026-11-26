@@ -135,7 +135,8 @@ def mostrar_respuesta(idx: int, msg: dict) -> None:
     f = r["fragmento"]
     if f and f["imagen"] and (RAIZ / f["imagen"]).exists():
         st.image(str(RAIZ / f["imagen"]), caption=f["titulo"])
-    if r["fuente"]:
+    # Los saludos, despedidas y agradecimientos tienen fuente "interno": no se muestra como fuente oficial.
+    if r["fuente"] and "http" in r["fuente"]:
         st.markdown(html_fuente(r["fuente"], f["vigencia"] if f else ""), unsafe_allow_html=True)
 
     if r["nivel"] == NIVEL_ACLARACION:
