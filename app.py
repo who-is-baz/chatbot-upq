@@ -1,4 +1,5 @@
 """Interfaz de chat del Asistente UPQ (Streamlit). La lógica vive en src/chatbot.py."""
+import base64
 from pathlib import Path
 
 import streamlit as st
@@ -100,7 +101,16 @@ def mostrar_respuesta(idx: int, msg: dict) -> None:
         mostrar_tecnico(r)
 
 
-st.title("🎓 Asistente UPQ")
+logo_b64 = base64.b64encode(LOGO.read_bytes()).decode()
+st.markdown(f"""
+<div class="upq-encabezado">
+  <img src="data:image/svg+xml;base64,{logo_b64}" alt="Logo UPQ">
+  <div>
+    <div class="upq-nombre">UNIVERSIDAD <span>POLITÉCNICA</span> DE QUERÉTARO</div>
+    <div class="upq-titulo">Asistente <span>UPQ</span></div>
+  </div>
+</div>
+""", unsafe_allow_html=True)
 with st.chat_message("assistant"):
     st.markdown(bot.config["bienvenida"])
 
