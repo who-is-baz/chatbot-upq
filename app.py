@@ -8,6 +8,8 @@ from src.chatbot import NIVEL_ACLARACION, ChatbotUPQ
 
 RAIZ = Path(__file__).resolve().parent
 LOGO = RAIZ / "assets" / "img" / "institucion" / "logo_upq.svg"
+AVATARES = {"assistant": str(RAIZ / "assets" / "img" / "institucion" / "avatar_polo.png"),
+            "user": ":material/person:"}
 
 st.set_page_config(page_title="Asistente UPQ", page_icon=str(LOGO))
 st.logo(str(LOGO), size="large")
@@ -111,11 +113,12 @@ st.markdown(f"""
   </div>
 </div>
 """, unsafe_allow_html=True)
-with st.chat_message("assistant"):
+with st.chat_message("assistant", avatar=AVATARES["assistant"]):
     st.markdown(bot.config["bienvenida"])
 
 for idx, msg in enumerate(estado.mensajes):
-    with st.chat_message("user" if msg["rol"] == "usuario" else "assistant"):
+    rol = "user" if msg["rol"] == "usuario" else "assistant"
+    with st.chat_message(rol, avatar=AVATARES[rol]):
         if msg["rol"] == "usuario":
             st.markdown(msg["texto"])
         else:
