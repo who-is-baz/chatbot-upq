@@ -1,5 +1,7 @@
 """Interfaz de chat del Asistente UPQ (Streamlit). La lógica vive en src/chatbot.py."""
 import base64
+import html
+import re
 from pathlib import Path
 
 import streamlit as st
@@ -81,6 +83,29 @@ with st.sidebar:
 
 
 # ---------------------------------------------------------------- render
+def enlaces_fuente(fuente: str) -> list[tuple[str | None, str]]:
+    """Convierte "url | nombre; url | nombre" en [(url, nombre), ...]."""
+    partes = re.split(r"(https?://\S+)", fuente)
+    if len(partes) == 1:
+        return [(None, fuente.strip())]
+    enlaces = []
+    for i in range(1, len(partes), 2):
+        url = partes[i]
+        nombre = partes[i + 1].strip(" |;") if i + 1 < len(partes) else ""
+        enlaces.append((url, nombre or url.split("/")[2]))
+    return enlaces
+
+
+def html_fuente(fuente: str, vigencia: str = "") -> str:
+    enlaces = " · ".join(
+        f'<a href="{html.escape(url)}" target="_blank" rel="noopener">{html.escape(nombre)}</a>' if url
+        else html.escape(nombre)
+        for url, nombre in enlaces_fuente(fuente)
+    )
+    extra = f'<span class="upq-vigencia">Vigencia: {html.escape(vigencia)}</span>' if vigencia else ""
+    return f'<div class="upq-fuente"><strong>Fuente oficial:</strong> {enlaces}{extra}</div>'
+
+
 def mostrar_tecnico(r: dict) -> None:
     with st.expander("Detalle técnico"):
         c1, c2, c3 = st.columns(3)
@@ -107,8 +132,7 @@ def mostrar_respuesta(idx: int, msg: dict) -> None:
     if f and f["imagen"] and (RAIZ / f["imagen"]).exists():
         st.image(str(RAIZ / f["imagen"]), caption=f["titulo"])
     if r["fuente"]:
-        vigencia = f" · Vigencia: {f['vigencia']}" if f and f["vigencia"] else ""
-        st.caption(f"Fuente: {r['fuente']}{vigencia}")
+        st.markdown(html_fuente(r["fuente"], f["vigencia"] if f else ""), unsafe_allow_html=True)
 
     if r["nivel"] == NIVEL_ACLARACION:
         columnas = st.columns(len(r["sugerencias"]))
