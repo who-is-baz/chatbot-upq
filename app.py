@@ -6,8 +6,10 @@ import streamlit as st
 from src.chatbot import NIVEL_ACLARACION, ChatbotUPQ
 
 RAIZ = Path(__file__).resolve().parent
+LOGO = RAIZ / "assets" / "img" / "institucion" / "logo_upq.svg"
 
-st.set_page_config(page_title="Asistente UPQ", page_icon="🎓")
+st.set_page_config(page_title="Asistente UPQ", page_icon=str(LOGO))
+st.logo(str(LOGO), size="large")
 
 
 @st.cache_resource
