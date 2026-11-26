@@ -65,3 +65,36 @@ header[data-testid="stHeader"] { background: transparent; }
   background: var(--upq-rojo);
   border-color: var(--upq-rojo);
 }
+
+/* ---------------------------------------------------------------- encabezado */
+.upq-encabezado {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 6px 0 18px;
+  margin-bottom: 18px;
+  border-bottom: 3px solid var(--upq-azul);
+}
+.upq-encabezado img { width: 86px; height: 86px; flex-shrink: 0; }
+.upq-nombre {
+  color: var(--upq-azul);
+  font-weight: 800;
+  font-size: 1.05rem;
+  letter-spacing: .06em;
+}
+.upq-nombre span { color: var(--upq-rojo); }
+.upq-titulo {
+  font-family: "Barlow Condensed", "Nunito Sans", sans-serif;
+  font-style: italic;
+  font-weight: 800;
+  font-size: 2.6rem;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--upq-azul);
+}
+.upq-titulo span { color: var(--upq-rojo); }
+@media (max-width: 640px) {
+  .upq-encabezado img { width: 60px; height: 60px; }
+  .upq-nombre { font-size: .8rem; }
+  .upq-titulo { font-size: 2rem; }
+}
