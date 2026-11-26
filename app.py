@@ -18,6 +18,15 @@ REDES = [
     ("TikTok", "https://www.tiktok.com/@upqoficial", "tiktok"),
     ("LinkedIn", "https://www.linkedin.com/school/upq", "linkedin-in"),
 ]
+# Enlaces del pie de página, iguales a los del pie de upq.mx.
+ENLACES_PIE = {
+    "Institución": [("Historia", "https://www.upq.mx/Institucion/Historia/"),
+                    ("Filosofía", "https://www.upq.mx/Institucion/Filosofia/"),
+                    ("Ubicación", "https://www.upq.mx/Institucion/Ubicacion/"),
+                    ("Directorio", "https://www.upq.mx/Institucion/Directorio/")],
+    "Comunidad": [("Servicios Estudiantiles", "https://www.upq.mx/ServiciosEstudiantiles/"),
+                  ("Información Pública", "https://www.upq.mx/InformacionPublica/")],
+}
 
 st.set_page_config(page_title="Asistente UPQ", page_icon=str(LOGO))
 st.logo(str(LOGO), size="large")
@@ -146,6 +155,31 @@ for idx, msg in enumerate(estado.mensajes):
             st.markdown(msg["texto"])
         else:
             mostrar_respuesta(idx, msg)
+
+
+# ---------------------------------------------------------------- pie de página
+def pie_de_pagina() -> str:
+    columnas = "".join(
+        f'<div class="upq-pie-col"><h4>{titulo}</h4><ul>'
+        + "".join(f'<li><a href="{url}" target="_blank" rel="noopener">{texto}</a></li>' for texto, url in enlaces)
+        + "</ul></div>"
+        for titulo, enlaces in ENLACES_PIE.items()
+    )
+    return f"""
+<footer class="upq-pie">
+  <div class="upq-pie-col">
+    <h4>Universidad Politécnica de Querétaro</h4>
+    <p>Carretera Estatal 420 SN, El Marqués, Querétaro, CP 76240</p>
+    <p>Tel. 442 101 9000</p>
+    <p>comunicacion@upq.mx</p>
+  </div>
+  {columnas}
+  <div class="upq-pie-col"><h4>Redes sociales</h4><div class="upq-pie-redes">{iconos_redes()}</div></div>
+</footer>
+"""
+
+
+st.markdown(pie_de_pagina(), unsafe_allow_html=True)
 
 
 # ---------------------------------------------------------------- entrada

@@ -128,3 +128,53 @@ header[data-testid="stHeader"] { background: transparent; }
 .upq-redes a:hover { background: var(--upq-rojo); }
 .upq-redes svg { width: 20px; height: 20px; }
 @media (max-width: 900px) { .upq-redes { display: none; } }
+
+/* ---------------------------------------------------------------- pie de página */
+.upq-pie {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 28px;
+  margin-top: 48px;
+  padding: 36px 32px;
+  background: var(--upq-azul);
+  border-radius: 14px;
+  color: #FFFFFF;
+}
+.upq-pie h4 {
+  position: relative;
+  margin: 0 0 22px;
+  padding: 0;
+  color: #FFFFFF;
+  font-family: "Nunito Sans", sans-serif;
+  font-size: .95rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+/* Línea roja bajo cada título, como en upq.mx. */
+.upq-pie h4::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -10px;
+  width: 60px;
+  height: 2px;
+  background: var(--upq-rojo);
+}
+.upq-pie p { margin: 0 0 6px; color: #DCE3EF; font-size: .9rem; }
+.upq-pie ul { list-style: none; margin: 0; padding: 0; }
+.upq-pie li { margin: 0 0 8px; }
+.upq-pie a { color: #DCE3EF !important; text-decoration: none; font-size: .9rem; }
+.upq-pie a:hover { color: #FFFFFF !important; text-decoration: underline; }
+.upq-pie-redes { display: flex; flex-wrap: wrap; gap: 8px; }
+.upq-pie-redes a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .12);
+  color: #FFFFFF !important;
+}
+.upq-pie-redes a:hover { background: var(--upq-rojo); text-decoration: none; }
+.upq-pie-redes svg { width: 16px; height: 16px; }
