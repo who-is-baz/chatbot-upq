@@ -71,6 +71,10 @@ with st.sidebar:
     st.markdown(f'<div class="upq-aviso">{AVISO}</div>', unsafe_allow_html=True)
     st.caption("Respondo con información tomada de fuentes oficiales de la Universidad Politécnica de Querétaro. "
                "No proceses datos personales: no escribas tu matrícula, CURP ni teléfono.")
+    tamano = st.segmented_control("Tamaño del texto", ["A−", "A", "A+"], default="A", key="tamano_texto",
+                                  help="Accesibilidad: reduce o aumenta el texto de la página.")
+    escala = {"A−": 90, "A": 100, "A+": 118}.get(tamano or "A", 100)
+    st.markdown(f"<style>html {{ font-size: {escala}%; }}</style>", unsafe_allow_html=True)
     modo_tecnico = st.toggle("Modo técnico", help="Muestra intención, confianza, top-3, origen y latencia.")
     if modo_tecnico:
         m = bot.cache.metricas()
