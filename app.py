@@ -10,6 +10,8 @@ LOGO = RAIZ / "assets" / "img" / "institucion" / "logo_upq.svg"
 
 st.set_page_config(page_title="Asistente UPQ", page_icon=str(LOGO))
 st.logo(str(LOGO), size="large")
+st.markdown(f"<style>{(RAIZ / 'assets' / 'estilos.css').read_text(encoding='utf-8')}</style>",
+            unsafe_allow_html=True)
 
 
 @st.cache_resource

@@ -1,0 +1,67 @@
+/* Estilos del Asistente UPQ. Colores tomados de la hoja de estilos de upq.mx. */
+:root {
+  --upq-azul: #002D72;
+  --upq-azul-claro: #EEF2F8;
+  --upq-azul-trans: rgba(0, 10, 87, .8);
+  --upq-rojo: #BA0C2F;
+  --upq-texto: #1F2937;
+  --upq-sombra: 0 2px 10px rgba(0, 45, 114, .10);
+}
+
+/* Barra superior de Streamlit transparente, para que no tape el encabezado. */
+header[data-testid="stHeader"] { background: transparent; }
+
+/* ---------------------------------------------------------------- burbujas de chat */
+[data-testid="stChatMessage"] {
+  border-radius: 14px;
+  padding: 14px 18px;
+  margin-bottom: 10px;
+}
+/* Asistente: tarjeta blanca con franja roja a la izquierda. */
+[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarAssistant"]),
+[data-testid="stChatMessage"]:has(img[alt="assistant avatar"]) {
+  background: #FFFFFF;
+  border: 1px solid #D6DEEA;
+  border-left: 5px solid var(--upq-rojo);
+  box-shadow: var(--upq-sombra);
+}
+/* Usuario: burbuja azul institucional. */
+[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarUser"]),
+[data-testid="stChatMessage"]:has(img[alt="user avatar"]) {
+  background: var(--upq-azul);
+  color: #FFFFFF;
+}
+[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarUser"]) p,
+[data-testid="stChatMessage"]:has(img[alt="user avatar"]) p { color: #FFFFFF; }
+
+/* ---------------------------------------------------------------- botones */
+.stButton > button {
+  border-radius: 8px;
+  border: 1.5px solid var(--upq-azul);
+  color: var(--upq-azul);
+  font-weight: 700;
+  transition: background .2s, color .2s, border-color .2s;
+}
+.stButton > button:hover {
+  background: var(--upq-rojo);
+  border-color: var(--upq-rojo);
+  color: #FFFFFF;
+}
+
+/* ---------------------------------------------------------------- caja de texto */
+[data-testid="stChatInput"] {
+  border: 2px solid var(--upq-azul);
+  border-radius: 12px;
+}
+[data-testid="stChatInput"]:focus-within { border-color: var(--upq-rojo); }
+
+/* ---------------------------------------------------------------- sidebar */
+[data-testid="stSidebar"] .stButton > button {
+  border-color: rgba(255, 255, 255, .55);
+  color: #FFFFFF;
+  background: transparent;
+}
+[data-testid="stSidebar"] .stButton > button:hover {
+  background: var(--upq-rojo);
+  border-color: var(--upq-rojo);
+}
