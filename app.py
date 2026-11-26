@@ -1,0 +1,118 @@
+"""Interfaz de chat del Asistente UPQ (Streamlit). La lógica vive en src/chatbot.py."""
+from pathlib import Path
+
+import streamlit as st
+
+from src.chatbot import NIVEL_ACLARACION, ChatbotUPQ
+
+RAIZ = Path(__file__).resolve().parent
+
+st.set_page_config(page_title="Asistente UPQ", page_icon="🎓")
+
+
+@st.cache_resource
+def cargar_bot() -> ChatbotUPQ:
+    return ChatbotUPQ()
+
+
+bot = cargar_bot()
+estado = st.session_state
+estado.setdefault("mensajes", [])     # [{"rol", "texto", "resultado"}]
+estado.setdefault("pendiente", None)  # pregunta o intención por responder en este ciclo
+estado.setdefault("votos", {})        # índice del mensaje -> "👍" | "👎"
+
+
+# ---------------------------------------------------------------- barra lateral
+with st.sidebar:
+    st.header("Asistente UPQ")
+    st.caption("Información oficial de la Universidad Politécnica de Querétaro. "
+               "No proceses datos personales: no escribas tu matrícula, CURP ni teléfono.")
+    modo_tecnico = st.toggle("Modo técnico", help="Muestra intención, confianza, top-3, origen y latencia.")
+    st.subheader("Preguntas sugeridas")
+    for i, pregunta in enumerate(bot.config["preguntas_sugeridas"]):
+        if st.button(pregunta, key=f"sugerida_{i}", use_container_width=True):
+            estado.pendiente = {"texto": pregunta}
+    if st.button("Borrar conversación", type="secondary"):
+        estado.mensajes, estado.votos, estado.pendiente = [], {}, None
+        st.rerun()
+
+
+# ---------------------------------------------------------------- render
+def mostrar_tecnico(r: dict) -> None:
+    with st.expander("Detalle técnico"):
+        c1, c2, c3 = st.columns(3)
+        c1.metric("Confianza", f"{r['confianza']:.2f}")
+        c2.metric("Origen", r["origen"])
+        c3.metric("Latencia", f"{r['latencia_ms']} ms")
+        st.write(f"**Intención:** `{r['intencion']}` · **Nivel:** `{r['nivel']}` · "
+                 f"**Umbrales:** alto {bot.umbral_alto}, bajo {bot.umbral_bajo}")
+        if r["top3"]:
+            st.write("**Top-3:** " + " · ".join(f"`{i}` {p:.2f}" for i, p in r["top3"]))
+        if r["fragmento"]:
+            f = r["fragmento"]
+            st.write(f"**Fragmento:** {f['id']} — {f['titulo']} (similitud {f['similitud']:.2f})")
+        if r.get("motivo"):
+            st.write(f"**Motivo del guardrail:** `{r['motivo']}`")
+
+
+def mostrar_respuesta(idx: int, msg: dict) -> None:
+    r = msg["resultado"]
+    st.markdown(msg["texto"])
+    f = r["fragmento"]
+    if f and f["imagen"] and (RAIZ / f["imagen"]).exists():
+        st.image(str(RAIZ / f["imagen"]), caption=f["titulo"])
+    if r["fuente"]:
+        vigencia = f" · Vigencia: {f['vigencia']}" if f and f["vigencia"] else ""
+        st.caption(f"Fuente: {r['fuente']}{vigencia}")
+
+    if r["nivel"] == NIVEL_ACLARACION:
+        columnas = st.columns(len(r["sugerencias"]))
+        for col, intencion in zip(columnas, r["sugerencias"]):
+            if col.button(bot.etiqueta(intencion), key=f"aclara_{idx}_{intencion}"):
+                estado.pendiente = {"intencion": intencion, "texto": msg.get("pregunta", "")}
+
+    if r["origen"] != "guardrail":
+        voto = estado.votos.get(idx)
+        if voto:
+            st.caption(f"Gracias por tu opinión {voto}")
+        else:
+            c1, c2, _ = st.columns([1, 1, 8])
+            if c1.button("👍", key=f"si_{idx}"):
+                estado.votos[idx] = "👍"
+                st.rerun()
+            if c2.button("👎", key=f"no_{idx}"):
+                estado.votos[idx] = "👎"
+                st.rerun()
+
+    if modo_tecnico:
+        mostrar_tecnico(r)
+
+
+st.title("🎓 Asistente UPQ")
+with st.chat_message("assistant"):
+    st.markdown(bot.config["bienvenida"])
+
+for idx, msg in enumerate(estado.mensajes):
+    with st.chat_message("user" if msg["rol"] == "usuario" else "assistant"):
+        if msg["rol"] == "usuario":
+            st.markdown(msg["texto"])
+        else:
+            mostrar_respuesta(idx, msg)
+
+
+# ---------------------------------------------------------------- entrada
+escrito = st.chat_input("Escribe tu pregunta…")
+if escrito:
+    estado.pendiente = {"texto": escrito}
+
+if estado.pendiente:
+    pendiente, estado.pendiente = estado.pendiente, None
+    if "intencion" in pendiente:
+        resultado = bot.responder_intencion(pendiente["intencion"], pendiente["texto"])
+        estado.mensajes.append({"rol": "usuario", "texto": bot.etiqueta(pendiente["intencion"])})
+    else:
+        resultado = bot.responder(pendiente["texto"])
+        estado.mensajes.append({"rol": "usuario", "texto": pendiente["texto"]})
+    estado.mensajes.append({"rol": "asistente", "texto": resultado["respuesta"],
+                            "resultado": resultado, "pregunta": pendiente["texto"]})
+    st.rerun()
