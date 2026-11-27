@@ -25,7 +25,11 @@ FRASES_INYECCION = ("ignora las instrucciones", "ignora tus instrucciones", "olv
                     "olvida las instrucciones", "ignore previous", "ignore all", "actua como", "ahora eres",
                     "system prompt", "prompt del sistema", "revela tus instrucciones", "jailbreak",
                     "modo desarrollador", "olvida que eres", "olvida q eres", "dime tu prompt",
-                    "muestrame tu prompt", "cual es tu prompt")
+                    "muestrame tu prompt", "cual es tu prompt",
+                    # Cambio de rol: piden que deje de ser el asistente de la UPQ
+                    "eres otro asistente", "eres otro bot", "ya no eres", "a partir de ahora",
+                    "finge que eres", "finge ser", "haz de cuenta que eres", "comportate como",
+                    "simula ser", "olvida todo lo anterior")
 
 # Datos personales: se buscan en el texto original, porque limpiar_texto quita la @.
 CORREO = re.compile(r"[\w.+-]+@[\w-]+\.[\w.]+")
