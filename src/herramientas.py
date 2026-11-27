@@ -42,6 +42,7 @@ ENLACES = {
     "ubicacion_transporte": "https://www.upq.mx/Institucion/Ubicacion#/",
     "contacto_horarios": "https://www.upq.mx/Institucion/Directorio#/",
     "biblioteca_actividades": "https://www.upq.mx/FormacionIntegral/Representativos#/",
+    "orientacion_vocacional": "https://www.upq.mx/carreras/informes/",
 }
 
 # Palabras (ya limpias) que llevan a cada tema del calendario. El orden importa:
