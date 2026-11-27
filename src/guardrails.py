@@ -15,7 +15,10 @@ FRASES_OTRAS = ("tec de monterrey", "la salle", "universidad autonoma de quereta
 # Se comparan contra el texto ya limpio (sin acentos ni signos).
 GROSERIAS = {"pendejo", "pendeja", "pinche", "chingada", "chingado", "chingar", "verga", "puto", "puta",
              "cabron", "cabrona", "mierda", "culero", "culera", "idiota", "estupido", "estupida", "imbecil",
-             "mamon", "ptm", "alv"}
+             "mamon", "ptm", "alv",
+             # Variantes y abreviaturas comunes
+             "puito", "puita", "putito", "putita", "putos", "putas", "pndjo", "pndja", "pendejos", "pendejas",
+             "cabrones", "mamona", "pinches", "ctm", "hdp", "vrga"}
 FRASES_OFENSIVAS = ("ni madres", "valiendo madre", "a la madre", "hijo de tu", "chinga tu", "te odio", "te detesto", "eres inutil", "bot inutil",
                     "no sirves", "no sirve para nada", "eres un asco", "callate")
 FRASES_INYECCION = ("ignora las instrucciones", "ignora tus instrucciones", "olvida tus instrucciones",
@@ -55,6 +58,14 @@ def menciona_otra_universidad(texto):
     return bool(palabras & (OTRAS_UNIVERSIDADES | OTROS_NIVELES)) or any(f in limpio for f in FRASES_OTRAS)
 
 
+def sin_ofuscar(limpio):
+    """Une rachas de 3 o más letras sueltas: "p u t o" (de "p.u.t.o" o "p-u-t-o") -> "puto".
+
+    No se usa distancia de edición porque "punto" quedaría a una letra de "puto".
+    """
+    return re.sub(r"\b(?:[a-zñ] ){2,}[a-zñ]\b", lambda m: m.group(0).replace(" ", ""), limpio)
+
+
 def validar_entrada(texto):
     """Devuelve (ok, texto, motivo). Si ok es False, 'motivo' dice por qué se rechaza."""
     if not isinstance(texto, str):
@@ -67,7 +78,8 @@ def validar_entrada(texto):
     if contiene_datos_personales(texto):
         return False, texto, DATOS_PERSONALES
     limpio = limpiar_texto(texto)
-    if set(limpio.split()) & GROSERIAS or any(f in limpio for f in FRASES_OFENSIVAS):
+    palabras = set(limpio.split()) | set(sin_ofuscar(limpio).split())
+    if palabras & GROSERIAS or any(f in limpio for f in FRASES_OFENSIVAS):
         return False, texto, LENGUAJE_OFENSIVO
     if any(f in limpio for f in FRASES_INYECCION):
         return False, texto, INYECCION
