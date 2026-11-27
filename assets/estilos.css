@@ -261,3 +261,11 @@ header[data-testid="stHeader"] {
 [data-testid="stSidebar"] [data-testid="stButtonGroup"] button[aria-checked="true"]:hover,
 [data-testid="stSidebar"] [data-testid="stButtonGroup"] button[aria-checked="true"]:focus { color: #FFFFFF; background: var(--upq-rojo); }
 [data-testid="stSidebar"] [data-testid="stButtonGroup"] button[aria-checked="false"]:hover { color: var(--upq-rojo); }
+
+/* ---------------------------------------------------------------- imagen en grande */
+[class*="st-key-ampliar_"] button {
+  min-height: 0;
+  padding: 2px 12px;
+  font-size: .8rem;
+}
+[data-testid="stDialog"] [data-testid="stImage"] img { max-height: 80vh; object-fit: contain; }

@@ -172,12 +172,20 @@ def mostrar_tecnico(r: dict) -> None:
             st.write(f"**Motivo del guardrail:** `{r['motivo']}`")
 
 
+@st.dialog("Imagen oficial", width="large")
+def ver_imagen(ruta: str, titulo: str) -> None:
+    """Muestra la imagen de una respuesta completa, en un diálogo encima del chat."""
+    st.image(ruta, caption=titulo, use_container_width=True)
+
+
 def mostrar_respuesta(idx: int, msg: dict) -> None:
     r = msg["resultado"]
     st.markdown(msg["texto"])
     f = r["fragmento"]
     if f and f["imagen"] and (RAIZ / f["imagen"]).exists():
         st.image(str(RAIZ / f["imagen"]), caption=f["titulo"])
+        if st.button("🔍 Ver en grande", key=f"ampliar_{idx}"):
+            ver_imagen(str(RAIZ / f["imagen"]), f["titulo"])
     # Los saludos, despedidas y agradecimientos tienen fuente "interno": no se muestra como fuente oficial.
     if r["fuente"] and "http" in r["fuente"]:
         st.markdown(html_fuente(r["fuente"], f["vigencia"] if f else ""), unsafe_allow_html=True)
