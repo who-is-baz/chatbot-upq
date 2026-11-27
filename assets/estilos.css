@@ -248,3 +248,12 @@ header[data-testid="stHeader"] {
   background: var(--upq-rojo);
   color: #FFFFFF;
 }
+
+/* ---------------------------------------------------------------- botón "Otras preguntas" */
+.st-key-otras_preguntas button {
+  padding: 2px 10px;
+  min-height: 0;
+  border-color: rgba(255, 255, 255, .55) !important;
+  font-size: .8rem;
+  white-space: nowrap;
+}

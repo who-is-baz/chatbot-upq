@@ -7,6 +7,7 @@ from pathlib import Path
 import streamlit as st
 
 from src.chatbot import NIVEL_ACLARACION, ChatbotUPQ
+from src.sugeridas import siguiente_tanda
 
 RAIZ = Path(__file__).resolve().parent
 LOGO = RAIZ / "assets" / "img" / "institucion" / "logo_upq.svg"
@@ -82,6 +83,9 @@ estado.setdefault("votos", {})        # índice del mensaje -> "👍" | "👎"
 # Memoria corta: intención de la última respuesta. Vive en la sesión de cada usuario, no en el bot
 # (el bot es compartido por todas las sesiones con st.cache_resource).
 estado.setdefault("ultima_intencion", None)
+# Preguntas sugeridas: 5 a la vez; "Otras preguntas" no repite hasta haber mostrado todas.
+if "sugeridas" not in estado:
+    estado.sugeridas, estado.sugeridas_vistas = siguiente_tanda(bot.config["preguntas_sugeridas"], [])
 
 
 # ---------------------------------------------------------------- barra lateral
@@ -100,8 +104,11 @@ with st.sidebar:
         st.caption(f"Caché: {m['aciertos']} aciertos de {m['aciertos'] + m['fallos']} consultas "
                    f"({m['tasa_aciertos']:.0%}) · {m['tamano']}/{m['capacidad']} guardadas")
     st.subheader("Preguntas sugeridas")
+    if st.button("🔄 Otras preguntas", key="otras_preguntas", help="Muestra otras 5 preguntas sin repetir"):
+        estado.sugeridas, estado.sugeridas_vistas = siguiente_tanda(
+            bot.config["preguntas_sugeridas"], estado.sugeridas_vistas)
     with st.container(key="sugeridas_sidebar"):
-        for i, pregunta in enumerate(bot.config["preguntas_sugeridas"]):
+        for i, pregunta in enumerate(estado.sugeridas):
             if st.button(pregunta, key=f"sugerida_{i}", use_container_width=True):
                 estado.pendiente = {"texto": pregunta}
     if st.button("Borrar conversación", type="secondary"):
@@ -209,7 +216,7 @@ if not estado.mensajes:
     with st.container(key="tarjetas"):
         st.markdown('<p class="upq-tarjetas-titulo">¿No sabes por dónde empezar?</p>', unsafe_allow_html=True)
         columnas = st.columns(2)
-        for i, pregunta in enumerate(bot.config["preguntas_sugeridas"]):
+        for i, pregunta in enumerate(estado.sugeridas):
             if columnas[i % 2].button(pregunta, key=f"tarjeta_{i}", use_container_width=True):
                 estado.pendiente = {"texto": pregunta}
 
