@@ -1,17 +1,20 @@
 """Interfaz de chat del Asistente UPQ (Streamlit). La lógica vive en src/chatbot.py."""
 import base64
 import html
+import json
 import re
 from pathlib import Path
 
 import streamlit as st
+import streamlit.components.v1 as components
 
+from src import router
 from src.chatbot import NIVEL_ACLARACION, ChatbotUPQ
+from src.preprocesamiento import limpiar_texto
+from src.sugeridas import siguiente_tanda, sugerencia_relacionada
 
 RAIZ = Path(__file__).resolve().parent
 LOGO = RAIZ / "assets" / "img" / "institucion" / "logo_upq.svg"
-AVATARES = {"assistant": str(RAIZ / "assets" / "img" / "institucion" / "avatar_polo.png"),
-            "user": ":material/person:"}
 # Redes oficiales de la UPQ: (nombre, enlace, ícono de Font Awesome Free en assets/img/redes/).
 REDES = [
     ("Facebook", "https://www.facebook.com/UPQoficial", "facebook-f"),
@@ -22,7 +25,7 @@ REDES = [
 ]
 AVISO = ("Proyecto escolar de Fundamentos de IA. No es un canal oficial de la UPQ; "
          "verifica la información en www.upq.mx.")
-# Enlaces del pie de página, iguales a los del pie de upq.mx.
+# Enlaces oficiales, iguales a los del pie de página de upq.mx.
 ENLACES_PIE = {
     "Institución": [("Historia", "https://www.upq.mx/Institucion/Historia/"),
                     ("Filosofía", "https://www.upq.mx/Institucion/Filosofia/"),
@@ -36,6 +39,10 @@ st.set_page_config(page_title="Asistente UPQ", page_icon=str(LOGO))
 st.logo(str(LOGO), size="large")
 st.markdown(f"<style>{(RAIZ / 'assets' / 'estilos.css').read_text(encoding='utf-8')}</style>",
             unsafe_allow_html=True)
+# El modo oscuro se carga después de los estilos normales para que los sobrescriba.
+if st.session_state.get("modo_oscuro"):
+    st.markdown(f"<style>{(RAIZ / 'assets' / 'estilos_oscuro.css').read_text(encoding='utf-8')}</style>",
+                unsafe_allow_html=True)
 
 
 def iconos_redes() -> str:
@@ -53,12 +60,37 @@ st.markdown(f'<nav class="upq-redes" aria-label="Redes sociales de la UPQ">{icon
             unsafe_allow_html=True)
 
 
+def contacto_upq() -> str:
+    """Datos de contacto, enlaces oficiales y redes de la UPQ (versión compacta para el sidebar)."""
+    secciones = "".join(
+        f"<h5>{titulo}</h5><ul>"
+        + "".join(f'<li><a href="{url}" target="_blank" rel="noopener">{texto}</a></li>' for texto, url in enlaces)
+        + "</ul>"
+        for titulo, enlaces in ENLACES_PIE.items()
+    )
+    return f"""<div class="upq-contacto">
+<p>Carretera Estatal 420 SN, El Marqués, Querétaro, CP 76240</p>
+<p>Tel. 442 101 9000 · comunicacion@upq.mx</p>
+{secciones}
+<h5>Redes sociales</h5><div class="upq-contacto-redes">{iconos_redes()}</div>
+</div>"""
+
+
 @st.cache_resource
 def cargar_bot() -> ChatbotUPQ:
     return ChatbotUPQ()
 
 
 bot = cargar_bot()
+
+
+@st.cache_resource
+def sugeridas_por_intencion() -> dict[str, list[str]]:
+    """Agrupa las preguntas sugeridas por la intención que les asigna el modelo (para el placeholder)."""
+    grupos: dict[str, list[str]] = {}
+    for pregunta in bot.config["preguntas_sugeridas"]:
+        grupos.setdefault(router.predecir(limpiar_texto(pregunta))["intencion"], []).append(pregunta)
+    return grupos
 estado = st.session_state
 estado.setdefault("mensajes", [])     # [{"rol", "texto", "resultado"}]
 estado.setdefault("pendiente", None)  # pregunta o intención por responder en este ciclo
@@ -66,6 +98,11 @@ estado.setdefault("votos", {})        # índice del mensaje -> "👍" | "👎"
 # Memoria corta: intención de la última respuesta. Vive en la sesión de cada usuario, no en el bot
 # (el bot es compartido por todas las sesiones con st.cache_resource).
 estado.setdefault("ultima_intencion", None)
+estado.setdefault("sugerencia", None)    # pregunta relacionada que se muestra en gris en la barra
+estado.setdefault("mascota", "polo")      # mascota que da la cara: "polo" o "poli"
+# Preguntas sugeridas: 5 a la vez; "Otras preguntas" no repite hasta haber mostrado todas.
+if "sugeridas" not in estado:
+    estado.sugeridas, estado.sugeridas_vistas = siguiente_tanda(bot.config["preguntas_sugeridas"], [])
 
 
 # ---------------------------------------------------------------- barra lateral
@@ -74,23 +111,40 @@ with st.sidebar:
     st.markdown(f'<div class="upq-aviso">{AVISO}</div>', unsafe_allow_html=True)
     st.caption("Respondo con información tomada de fuentes oficiales de la Universidad Politécnica de Querétaro. "
                "No proceses datos personales: no escribas tu matrícula, CURP ni teléfono.")
+    mascotas = bot.config["mascotas"]
+    elegida = st.segmented_control("Mascota", list(mascotas), default=estado.mascota, key="selector_mascota",
+                                   format_func=lambda m: mascotas[m]["nombre"],
+                                   help="Elige quién te atiende. Cambia el avatar sin borrar la conversación.")
+    estado.mascota = elegida or estado.mascota
     tamano = st.segmented_control("Tamaño del texto", ["A−", "A", "A+"], default="A", key="tamano_texto",
                                   help="Accesibilidad: reduce o aumenta el texto de la página.")
     escala = {"A−": 90, "A": 100, "A+": 118}.get(tamano or "A", 100)
     st.markdown(f"<style>html {{ font-size: {escala}%; }}</style>", unsafe_allow_html=True)
+    st.toggle("🌙 Modo oscuro", key="modo_oscuro")
     modo_tecnico = st.toggle("Modo técnico", help="Muestra intención, confianza, top-3, origen y latencia.")
     if modo_tecnico:
         m = bot.cache.metricas()
         st.caption(f"Caché: {m['aciertos']} aciertos de {m['aciertos'] + m['fallos']} consultas "
                    f"({m['tasa_aciertos']:.0%}) · {m['tamano']}/{m['capacidad']} guardadas")
     st.subheader("Preguntas sugeridas")
+    if st.button("🔄 Otras preguntas", key="otras_preguntas", help="Muestra otras 5 preguntas sin repetir"):
+        estado.sugeridas, estado.sugeridas_vistas = siguiente_tanda(
+            bot.config["preguntas_sugeridas"], estado.sugeridas_vistas)
     with st.container(key="sugeridas_sidebar"):
-        for i, pregunta in enumerate(bot.config["preguntas_sugeridas"]):
+        for i, pregunta in enumerate(estado.sugeridas):
             if st.button(pregunta, key=f"sugerida_{i}", use_container_width=True):
                 estado.pendiente = {"texto": pregunta}
     if st.button("Borrar conversación", type="secondary"):
         estado.mensajes, estado.votos, estado.pendiente, estado.ultima_intencion = [], {}, None, None
+        estado.sugerencia = None
         st.rerun()
+    with st.expander("Contacto y enlaces de la UPQ"):
+        st.markdown(contacto_upq(), unsafe_allow_html=True)
+
+
+# Avatares: la mascota elegida para el asistente y un ícono simple para el usuario.
+mascota = bot.config["mascotas"][estado.mascota]
+AVATARES = {"assistant": str(RAIZ / mascota["avatar"]), "user": ":material/person:"}
 
 
 # ---------------------------------------------------------------- render
@@ -138,12 +192,20 @@ def mostrar_tecnico(r: dict) -> None:
             st.write(f"**Motivo del guardrail:** `{r['motivo']}`")
 
 
+@st.dialog("Imagen oficial", width="large")
+def ver_imagen(ruta: str, titulo: str) -> None:
+    """Muestra la imagen de una respuesta completa, en un diálogo encima del chat."""
+    st.image(ruta, caption=titulo, use_container_width=True)
+
+
 def mostrar_respuesta(idx: int, msg: dict) -> None:
     r = msg["resultado"]
     st.markdown(msg["texto"])
     f = r["fragmento"]
     if f and f["imagen"] and (RAIZ / f["imagen"]).exists():
         st.image(str(RAIZ / f["imagen"]), caption=f["titulo"])
+        if st.button("🔍 Ver en grande", key=f"ampliar_{idx}"):
+            ver_imagen(str(RAIZ / f["imagen"]), f["titulo"])
     # Los saludos, despedidas y agradecimientos tienen fuente "interno": no se muestra como fuente oficial.
     if r["fuente"] and "http" in r["fuente"]:
         st.markdown(html_fuente(r["fuente"], f["vigencia"] if f else ""), unsafe_allow_html=True)
@@ -184,14 +246,15 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 with st.chat_message("assistant", avatar=AVATARES["assistant"]):
-    st.markdown(bot.config["bienvenida"])
+    # El sonido de la mascota va solo en la bienvenida, nunca en las respuestas con información oficial.
+    st.markdown(bot.config["bienvenida_mascota"].format(nombre=mascota["nombre"], sonido=mascota["sonido"]))
 
 # Con la conversación vacía, las preguntas sugeridas también salen como tarjetas en el centro.
 if not estado.mensajes:
     with st.container(key="tarjetas"):
         st.markdown('<p class="upq-tarjetas-titulo">¿No sabes por dónde empezar?</p>', unsafe_allow_html=True)
         columnas = st.columns(2)
-        for i, pregunta in enumerate(bot.config["preguntas_sugeridas"]):
+        for i, pregunta in enumerate(estado.sugeridas):
             if columnas[i % 2].button(pregunta, key=f"tarjeta_{i}", use_container_width=True):
                 estado.pendiente = {"texto": pregunta}
 
@@ -204,34 +267,27 @@ for idx, msg in enumerate(estado.mensajes):
             mostrar_respuesta(idx, msg)
 
 
-# ---------------------------------------------------------------- pie de página
-def pie_de_pagina() -> str:
-    columnas = "".join(
-        f'<div class="upq-pie-col"><h4>{titulo}</h4><ul>'
-        + "".join(f'<li><a href="{url}" target="_blank" rel="noopener">{texto}</a></li>' for texto, url in enlaces)
-        + "</ul></div>"
-        for titulo, enlaces in ENLACES_PIE.items()
-    )
-    return f"""
-<footer class="upq-pie">
-  <div class="upq-pie-col">
-    <h4>Universidad Politécnica de Querétaro</h4>
-    <p>Carretera Estatal 420 SN, El Marqués, Querétaro, CP 76240</p>
-    <p>Tel. 442 101 9000</p>
-    <p>comunicacion@upq.mx</p>
-  </div>
-  {columnas}
-  <div class="upq-pie-col"><h4>Redes sociales</h4><div class="upq-pie-redes">{iconos_redes()}</div></div>
-  <div class="upq-pie-aviso">{AVISO}</div>
-</footer>
-"""
-
-
-st.markdown(pie_de_pagina(), unsafe_allow_html=True)
-
-
 # ---------------------------------------------------------------- entrada
-escrito = st.chat_input("Escribe tu pregunta…")
+placeholder = f"{estado.sugerencia}   (Tab para usarla)" if estado.sugerencia else "Escribe tu pregunta…"
+escrito = st.chat_input(placeholder)
+# Tab copia la sugerencia a la barra cuando está vacía. Streamlit no lo trae: el script asigna el valor
+# con el setter nativo del textarea y dispara "input" para que React lo registre.
+components.html(f"""<script>
+const doc = window.parent.document;
+window.parent.__upqSugerencia = {json.dumps(estado.sugerencia or "")};
+const barra = doc.querySelector('[data-testid="stChatInput"] textarea');
+if (barra && !barra.dataset.upqTab) {{
+  barra.dataset.upqTab = "1";
+  barra.addEventListener("keydown", (e) => {{
+    const sugerencia = window.parent.__upqSugerencia;
+    if (e.key !== "Tab" || e.shiftKey || barra.value || !sugerencia) return;
+    e.preventDefault();
+    const setter = Object.getOwnPropertyDescriptor(window.parent.HTMLTextAreaElement.prototype, "value").set;
+    setter.call(barra, sugerencia);
+    barra.dispatchEvent(new Event("input", {{ bubbles: true }}));
+  }});
+}}
+</script>""", height=0)
 if escrito:
     estado.pendiente = {"texto": escrito}
 
@@ -247,4 +303,9 @@ if estado.pendiente:
                             "resultado": resultado, "pregunta": pendiente["texto"]})
     if resultado["nivel"] == "respuesta" and resultado["origen"] in ("modelo", "cache"):
         estado.ultima_intencion = resultado["intencion"]
+    hechas = {limpiar_texto(m["texto"]) for m in estado.mensajes if m["rol"] == "usuario"}
+    pendientes = [p for p in bot.config["preguntas_sugeridas"] if limpiar_texto(p) not in hechas]
+    estado.sugerencia = sugerencia_relacionada(
+        sugeridas_por_intencion(), resultado["top3"], set(bot.config["preguntas_sugeridas"]) - set(pendientes),
+        bot.config["preguntas_sugeridas"])
     st.rerun()

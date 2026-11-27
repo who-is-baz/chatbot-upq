@@ -1,17 +1,18 @@
-/* Estilos del Asistente UPQ. Colores tomados de la hoja de estilos de upq.mx. */
+/* Estilos del Asistente UPQ. Rojo de la hoja de estilos de upq.mx; azul oscurecido para más contraste.
+   Para ajustar el azul basta con cambiar --upq-azul (y el mismo valor en .streamlit/config.toml). */
 :root {
-  --upq-azul: #002D72;
+  --upq-azul: #001F4D;
   --upq-azul-claro: #EEF2F8;
-  --upq-azul-trans: rgba(0, 10, 87, .8);
+  --upq-azul-trans: color-mix(in srgb, var(--upq-azul) 85%, transparent);
   --upq-rojo: #BA0C2F;
   --upq-texto: #1F2937;
-  --upq-sombra: 0 2px 10px rgba(0, 45, 114, .10);
+  --upq-sombra: 0 2px 10px color-mix(in srgb, var(--upq-azul) 12%, transparent);
 }
 
 /* Barra superior de Streamlit casi opaca: el logo no se encima con el texto al hacer scroll. */
 header[data-testid="stHeader"] {
   background: rgba(255, 255, 255, .96);
-  box-shadow: 0 1px 6px rgba(0, 45, 114, .08);
+  box-shadow: 0 1px 6px color-mix(in srgb, var(--upq-azul) 10%, transparent);
 }
 
 /* ---------------------------------------------------------------- burbujas de chat */
@@ -132,55 +133,34 @@ header[data-testid="stHeader"] {
 .upq-redes svg { width: 20px; height: 20px; }
 @media (max-width: 900px) { .upq-redes { display: none; } }
 
-/* ---------------------------------------------------------------- pie de página */
-.upq-pie {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-  gap: 28px;
-  margin-top: 48px;
-  padding: 36px 32px;
-  background: var(--upq-azul);
-  border-radius: 14px;
+/* ---------------------------------------------------------------- contacto y enlaces (sidebar) */
+.upq-contacto p { margin: 0 0 4px; font-size: .85rem; color: #DCE3EF; }
+.upq-contacto h5 {
+  margin: 12px 0 6px;
+  padding-bottom: 4px;
+  border-bottom: 2px solid var(--upq-rojo);
+  width: fit-content;
   color: #FFFFFF;
-}
-.upq-pie h4 {
-  position: relative;
-  margin: 0 0 22px;
-  padding: 0;
-  color: #FFFFFF;
-  font-family: "Nunito Sans", sans-serif;
-  font-size: .95rem;
+  font-size: .8rem;
   font-weight: 800;
   text-transform: uppercase;
 }
-/* Línea roja bajo cada título, como en upq.mx. */
-.upq-pie h4::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: -10px;
-  width: 60px;
-  height: 2px;
-  background: var(--upq-rojo);
-}
-.upq-pie p { margin: 0 0 6px; color: #DCE3EF; font-size: .9rem; }
-.upq-pie ul { list-style: none; margin: 0; padding: 0; }
-.upq-pie li { margin: 0 0 8px; }
-.upq-pie a { color: #DCE3EF !important; text-decoration: none; font-size: .9rem; }
-.upq-pie a:hover { color: #FFFFFF !important; text-decoration: underline; }
-.upq-pie-redes { display: flex; flex-wrap: wrap; gap: 8px; }
-.upq-pie-redes a {
+.upq-contacto ul { list-style: none; margin: 0; padding: 0; }
+.upq-contacto li { margin: 0 0 4px; font-size: .85rem; }
+.upq-contacto a { color: #FFFFFF !important; text-decoration: none; }
+.upq-contacto a:hover { text-decoration: underline; }
+.upq-contacto-redes { display: flex; flex-wrap: wrap; gap: 6px; }
+.upq-contacto-redes a {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 38px;
-  height: 38px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, .12);
-  color: #FFFFFF !important;
+  background: rgba(255, 255, 255, .14);
 }
-.upq-pie-redes a:hover { background: var(--upq-rojo); text-decoration: none; }
-.upq-pie-redes svg { width: 16px; height: 16px; }
+.upq-contacto-redes a:hover { background: var(--upq-rojo); text-decoration: none; }
+.upq-contacto-redes svg { width: 14px; height: 14px; }
 
 /* ---------------------------------------------------------------- fuente e imagen de cada respuesta */
 .upq-fuente {
@@ -257,15 +237,6 @@ header[data-testid="stHeader"] {
   font-size: .82rem;
   font-weight: 700;
 }
-.upq-pie-aviso {
-  grid-column: 1 / -1;
-  padding-top: 16px;
-  border-top: 1px solid rgba(255, 255, 255, .2);
-  color: #FFFFFF;
-  font-size: .85rem;
-  font-weight: 700;
-  text-align: center;
-}
 
 /* ---------------------------------------------------------------- accesibilidad: tamaño del texto */
 /* Solo los botones de opción (tienen aria-checked); el ícono de ayuda queda igual. */
@@ -278,3 +249,26 @@ header[data-testid="stHeader"] {
   background: var(--upq-rojo);
   color: #FFFFFF;
 }
+
+/* ---------------------------------------------------------------- botón "Otras preguntas" */
+.st-key-otras_preguntas button {
+  padding: 2px 10px;
+  min-height: 0;
+  border-color: rgba(255, 255, 255, .55) !important;
+  font-size: .8rem;
+  white-space: nowrap;
+}
+[data-testid="stSidebar"] [data-testid="stButtonGroup"] button[aria-checked="true"]:hover,
+[data-testid="stSidebar"] [data-testid="stButtonGroup"] button[aria-checked="true"]:focus { color: #FFFFFF; background: var(--upq-rojo); }
+[data-testid="stSidebar"] [data-testid="stButtonGroup"] button[aria-checked="false"]:hover { color: var(--upq-rojo); }
+
+/* ---------------------------------------------------------------- imagen en grande */
+[class*="st-key-ampliar_"] button {
+  min-height: 0;
+  padding: 2px 12px;
+  font-size: .8rem;
+}
+[data-testid="stDialog"] [data-testid="stImage"] img { max-height: 80vh; object-fit: contain; }
+
+/* ---------------------------------------------------------------- script del Tab (iframe invisible) */
+.stElementContainer:has(> iframe[height="0"]), [data-testid="stIFrame"][height="0"] { display: none; }

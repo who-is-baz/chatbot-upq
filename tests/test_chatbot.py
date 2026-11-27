@@ -190,3 +190,18 @@ def test_respuestas_con_contexto_no_se_guardan_en_cache(monkeypatch):
     fijar_top3(monkeypatch, [("costos_pagos", medio), ("oferta_educativa", 0.2), ("becas", 0.1)])
     bot.responder("y cuánto dura", contexto="oferta_educativa")
     assert len(bot.cache) == 0
+
+
+# ---------------------------------------------------------------- mascotas
+def test_mascotas_tienen_avatar_y_sonido(bot):
+    from pathlib import Path
+    for clave, m in bot.config["mascotas"].items():
+        assert m["nombre"] and m["sonido"]
+        assert Path(m["avatar"]).exists(), m["avatar"]
+
+
+def test_el_sonido_de_la_mascota_no_llega_a_las_respuestas(bot):
+    sonidos = [m["sonido"] for m in bot.config["mascotas"].values()]
+    for texto in ["hola", "hay becas", "capital de francia", "cuando son las vacaciones"]:
+        respuesta = bot.responder(texto)["respuesta"]
+        assert not any(s in respuesta for s in sonidos)

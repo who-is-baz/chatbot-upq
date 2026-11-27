@@ -1,22 +1,23 @@
-# Tema con los colores institucionales de upq.mx (tomados de su hoja de estilos):
-# azul #002D72 (pie de página, títulos) y rojo #BA0C2F (acentos).
+# Tema con los colores institucionales: rojo #BA0C2F (de la hoja de estilos de upq.mx) y azul oscuro #001F4D.
+# El azul se define una vez aquí (linkColor y el fondo del sidebar) y una vez en assets/estilos.css (--upq-azul).
+# Si lo cambias, cámbialo en los dos lugares; los tonos del sidebar son el mismo azul un poco más claro.
 [theme]
 base = "light"
 primaryColor = "#BA0C2F"
 backgroundColor = "#FFFFFF"
 secondaryBackgroundColor = "#EEF2F8"
 textColor = "#1F2937"
-linkColor = "#002D72"
+linkColor = "#001F4D"
 font = "Nunito Sans:https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,wght@0,400;0,700;0,800;1,400&display=swap"
 headingFont = "Barlow Condensed:https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@1,800&display=swap"
 borderColor = "#D6DEEA"
 
 [theme.sidebar]
-backgroundColor = "#002D72"
-secondaryBackgroundColor = "#0A3D8C"
+backgroundColor = "#001F4D"
+secondaryBackgroundColor = "#0B2F66"
 textColor = "#FFFFFF"
 linkColor = "#FFFFFF"
-borderColor = "#1B4C99"
+borderColor = "#1A3A6E"
 
 [client]
 toolbarMode = "minimal"
