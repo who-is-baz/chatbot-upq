@@ -25,3 +25,19 @@ def siguiente_tanda(todas: list[str], vistas: list[str], n: int = 5,
         tanda += extra
         vistas = extra
     return tanda, vistas
+
+
+def sugerencia_relacionada(por_intencion: dict[str, list[str]], top3: list, ya_hechas: set[str],
+                           todas: list[str], rng: random.Random | None = None) -> str | None:
+    """Una pregunta sugerida relacionada con la última respuesta, que no se haya hecho todavía.
+
+    Busca primero en la intención de la respuesta y luego en las vecinas del top-3; si ninguna tiene
+    preguntas nuevas, toma cualquiera de la lista que no se haya hecho. Devuelve None si ya se hicieron todas.
+    """
+    rng = rng or random.Random()
+    for intencion, _ in top3:
+        nuevas = [p for p in por_intencion.get(intencion, []) if p not in ya_hechas]
+        if nuevas:
+            return rng.choice(nuevas)
+    restantes = [p for p in todas if p not in ya_hechas]
+    return rng.choice(restantes) if restantes else None

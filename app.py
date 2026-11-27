@@ -1,13 +1,17 @@
 """Interfaz de chat del Asistente UPQ (Streamlit). La lógica vive en src/chatbot.py."""
 import base64
 import html
+import json
 import re
 from pathlib import Path
 
 import streamlit as st
+import streamlit.components.v1 as components
 
+from src import router
 from src.chatbot import NIVEL_ACLARACION, ChatbotUPQ
-from src.sugeridas import siguiente_tanda
+from src.preprocesamiento import limpiar_texto
+from src.sugeridas import siguiente_tanda, sugerencia_relacionada
 
 RAIZ = Path(__file__).resolve().parent
 LOGO = RAIZ / "assets" / "img" / "institucion" / "logo_upq.svg"
@@ -78,6 +82,15 @@ def cargar_bot() -> ChatbotUPQ:
 
 
 bot = cargar_bot()
+
+
+@st.cache_resource
+def sugeridas_por_intencion() -> dict[str, list[str]]:
+    """Agrupa las preguntas sugeridas por la intención que les asigna el modelo (para el placeholder)."""
+    grupos: dict[str, list[str]] = {}
+    for pregunta in bot.config["preguntas_sugeridas"]:
+        grupos.setdefault(router.predecir(limpiar_texto(pregunta))["intencion"], []).append(pregunta)
+    return grupos
 estado = st.session_state
 estado.setdefault("mensajes", [])     # [{"rol", "texto", "resultado"}]
 estado.setdefault("pendiente", None)  # pregunta o intención por responder en este ciclo
@@ -85,6 +98,7 @@ estado.setdefault("votos", {})        # índice del mensaje -> "👍" | "👎"
 # Memoria corta: intención de la última respuesta. Vive en la sesión de cada usuario, no en el bot
 # (el bot es compartido por todas las sesiones con st.cache_resource).
 estado.setdefault("ultima_intencion", None)
+estado.setdefault("sugerencia", None)    # pregunta relacionada que se muestra en gris en la barra
 estado.setdefault("mascota", "polo")      # mascota que da la cara: "polo" o "poli"
 # Preguntas sugeridas: 5 a la vez; "Otras preguntas" no repite hasta haber mostrado todas.
 if "sugeridas" not in estado:
@@ -122,6 +136,7 @@ with st.sidebar:
                 estado.pendiente = {"texto": pregunta}
     if st.button("Borrar conversación", type="secondary"):
         estado.mensajes, estado.votos, estado.pendiente, estado.ultima_intencion = [], {}, None, None
+        estado.sugerencia = None
         st.rerun()
     with st.expander("Contacto y enlaces de la UPQ"):
         st.markdown(contacto_upq(), unsafe_allow_html=True)
@@ -253,7 +268,26 @@ for idx, msg in enumerate(estado.mensajes):
 
 
 # ---------------------------------------------------------------- entrada
-escrito = st.chat_input("Escribe tu pregunta…")
+placeholder = f"{estado.sugerencia}   (Tab para usarla)" if estado.sugerencia else "Escribe tu pregunta…"
+escrito = st.chat_input(placeholder)
+# Tab copia la sugerencia a la barra cuando está vacía. Streamlit no lo trae: el script asigna el valor
+# con el setter nativo del textarea y dispara "input" para que React lo registre.
+components.html(f"""<script>
+const doc = window.parent.document;
+window.parent.__upqSugerencia = {json.dumps(estado.sugerencia or "")};
+const barra = doc.querySelector('[data-testid="stChatInput"] textarea');
+if (barra && !barra.dataset.upqTab) {{
+  barra.dataset.upqTab = "1";
+  barra.addEventListener("keydown", (e) => {{
+    const sugerencia = window.parent.__upqSugerencia;
+    if (e.key !== "Tab" || e.shiftKey || barra.value || !sugerencia) return;
+    e.preventDefault();
+    const setter = Object.getOwnPropertyDescriptor(window.parent.HTMLTextAreaElement.prototype, "value").set;
+    setter.call(barra, sugerencia);
+    barra.dispatchEvent(new Event("input", {{ bubbles: true }}));
+  }});
+}}
+</script>""", height=0)
 if escrito:
     estado.pendiente = {"texto": escrito}
 
@@ -269,4 +303,9 @@ if estado.pendiente:
                             "resultado": resultado, "pregunta": pendiente["texto"]})
     if resultado["nivel"] == "respuesta" and resultado["origen"] in ("modelo", "cache"):
         estado.ultima_intencion = resultado["intencion"]
+    hechas = {limpiar_texto(m["texto"]) for m in estado.mensajes if m["rol"] == "usuario"}
+    pendientes = [p for p in bot.config["preguntas_sugeridas"] if limpiar_texto(p) not in hechas]
+    estado.sugerencia = sugerencia_relacionada(
+        sugeridas_por_intencion(), resultado["top3"], set(bot.config["preguntas_sugeridas"]) - set(pendientes),
+        bot.config["preguntas_sugeridas"])
     st.rerun()

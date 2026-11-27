@@ -269,3 +269,6 @@ header[data-testid="stHeader"] {
   font-size: .8rem;
 }
 [data-testid="stDialog"] [data-testid="stImage"] img { max-height: 80vh; object-fit: contain; }
+
+/* ---------------------------------------------------------------- script del Tab (iframe invisible) */
+.stElementContainer:has(> iframe[height="0"]), [data-testid="stIFrame"][height="0"] { display: none; }

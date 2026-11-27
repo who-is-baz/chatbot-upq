@@ -48,3 +48,28 @@ def test_ciclo_nuevo_no_repite_la_tanda_anterior():
             tanda, vistas = siguiente_tanda(TODAS, vistas, rng=rng)
         nueva, _ = siguiente_tanda(TODAS, vistas, rng=rng)
         assert not set(nueva) & set(tanda)
+
+
+# ---------------------------------------------------------------- sugerencia relacionada (placeholder)
+from src.sugeridas import sugerencia_relacionada  # noqa: E402
+
+POR_INTENCION = {"becas": ["¿Qué tipos de becas hay?"], "costos_pagos": ["¿Cuánto cuesta la reinscripción?"],
+                 "titulacion": ["¿Cuánto cuesta titularme?"]}
+LISTA = [p for ps in POR_INTENCION.values() for p in ps]
+
+
+def test_sugiere_de_la_misma_intencion():
+    top3 = [("becas", 0.9), ("costos_pagos", 0.05), ("admision", 0.01)]
+    assert sugerencia_relacionada(POR_INTENCION, top3, set(), LISTA) == "¿Qué tipos de becas hay?"
+
+
+def test_si_ya_se_hizo_sugiere_una_vecina_del_top3():
+    top3 = [("becas", 0.9), ("costos_pagos", 0.05), ("admision", 0.01)]
+    ya = {"¿Qué tipos de becas hay?"}
+    assert sugerencia_relacionada(POR_INTENCION, top3, ya, LISTA) == "¿Cuánto cuesta la reinscripción?"
+
+
+def test_sin_relacionadas_toma_cualquiera_nueva_y_none_al_final():
+    top3 = [("admision", 0.9)]
+    assert sugerencia_relacionada(POR_INTENCION, top3, set(LISTA[:2]), LISTA) == LISTA[2]
+    assert sugerencia_relacionada(POR_INTENCION, top3, set(LISTA), LISTA) is None
