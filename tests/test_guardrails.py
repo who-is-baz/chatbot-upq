@@ -48,3 +48,8 @@ def test_validar_salida():
 ])
 def test_reglas_agregadas_con_la_prueba_de_estres(texto, motivo):
     assert g.validar_entrada(texto)[0::2] == (False, motivo)
+
+
+@pytest.mark.parametrize("texto", ["te odio", "eres un bot inútil", "no sirves pa nada", "cállate"])
+def test_frases_hostiles_se_rechazan(texto):
+    assert g.validar_entrada(texto)[0::2] == (False, g.LENGUAJE_OFENSIVO)

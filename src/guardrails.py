@@ -16,7 +16,8 @@ FRASES_OTRAS = ("tec de monterrey", "la salle", "universidad autonoma de quereta
 GROSERIAS = {"pendejo", "pendeja", "pinche", "chingada", "chingado", "chingar", "verga", "puto", "puta",
              "cabron", "cabrona", "mierda", "culero", "culera", "idiota", "estupido", "estupida", "imbecil",
              "mamon", "ptm", "alv"}
-FRASES_OFENSIVAS = ("ni madres", "valiendo madre", "a la madre", "hijo de tu", "chinga tu")
+FRASES_OFENSIVAS = ("ni madres", "valiendo madre", "a la madre", "hijo de tu", "chinga tu", "te odio", "te detesto", "eres inutil", "bot inutil",
+                    "no sirves", "no sirve para nada", "eres un asco", "callate")
 FRASES_INYECCION = ("ignora las instrucciones", "ignora tus instrucciones", "olvida tus instrucciones",
                     "olvida las instrucciones", "ignore previous", "ignore all", "actua como", "ahora eres",
                     "system prompt", "prompt del sistema", "revela tus instrucciones", "jailbreak",
