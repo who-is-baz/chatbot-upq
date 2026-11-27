@@ -42,6 +42,25 @@ def test_confianza_media_pregunta_quisiste_decir(bot, monkeypatch):
     assert r["sugerencias"] == ["becas", "becas", "admision"]  # el top-3 tal cual
 
 
+def fijar_top3(monkeypatch, top3):
+    monkeypatch.setattr(router, "predecir",
+                        lambda _: {"intencion": top3[0][0], "confianza": top3[0][1], "top3": top3})
+
+
+def test_aclaracion_no_sugiere_saludo_despedida_ni_agradecimiento(bot, monkeypatch):
+    medio = (bot.umbral_alto + bot.umbral_bajo) / 2
+    fijar_top3(monkeypatch, [("agradecimiento", medio), ("titulacion", 0.2), ("despedida", 0.1)])
+    r = bot.responder("graduacion")
+    assert r["nivel"] == "aclaracion" and r["sugerencias"] == ["titulacion"]
+
+
+def test_aclaracion_solo_social_da_fallback(bot, monkeypatch):
+    medio = (bot.umbral_alto + bot.umbral_bajo) / 2
+    fijar_top3(monkeypatch, [("saludo", medio), ("despedida", 0.2), ("agradecimiento", 0.1)])
+    r = bot.responder("ehh")
+    assert r["nivel"] == "fallback"
+
+
 def test_confianza_baja_da_fallback_con_contacto(bot, monkeypatch):
     fijar_prediccion(monkeypatch, "becas", bot.umbral_bajo / 2)
     r = bot.responder("cual es la capital de francia")

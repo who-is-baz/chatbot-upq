@@ -20,6 +20,7 @@ RAIZ = Path(__file__).resolve().parent.parent
 # Valores de origen y nivel que devuelve responder()
 ORIGEN_GUARDRAIL, ORIGEN_CACHE, ORIGEN_MODELO, ORIGEN_FALLBACK = "guardrail", "cache", "modelo", "fallback"
 NIVEL_RESPUESTA, NIVEL_ACLARACION, NIVEL_FALLBACK = "respuesta", "aclaracion", "fallback"
+INTENCIONES_SOCIALES = {"saludo", "despedida", "agradecimiento"}
 
 
 class ChatbotUPQ:
@@ -107,8 +108,12 @@ class ChatbotUPQ:
         return self._base(corta["respuesta"], corta["fuente"], ORIGEN_MODELO, NIVEL_RESPUESTA)
 
     def _aclarar(self, top3: list) -> dict:
+        # Saludo, despedida y agradecimiento no son temas que valga la pena sugerir en "¿Quisiste decir…?".
+        sugerencias = [i for i, _ in top3 if i not in INTENCIONES_SOCIALES]
+        if not sugerencias:
+            return self._fallback()
         return self._base(self.config["aclaracion"], "", ORIGEN_FALLBACK, NIVEL_ACLARACION,
-                          es_fallback=True, sugerencias=[i for i, _ in top3])
+                          es_fallback=True, sugerencias=sugerencias)
 
     def _fallback(self) -> dict:
         return self._base(self.config["fallback"], self.config["fuente_fallback"],
