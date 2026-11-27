@@ -63,6 +63,9 @@ estado = st.session_state
 estado.setdefault("mensajes", [])     # [{"rol", "texto", "resultado"}]
 estado.setdefault("pendiente", None)  # pregunta o intención por responder en este ciclo
 estado.setdefault("votos", {})        # índice del mensaje -> "👍" | "👎"
+# Memoria corta: intención de la última respuesta. Vive en la sesión de cada usuario, no en el bot
+# (el bot es compartido por todas las sesiones con st.cache_resource).
+estado.setdefault("ultima_intencion", None)
 
 
 # ---------------------------------------------------------------- barra lateral
@@ -86,7 +89,7 @@ with st.sidebar:
             if st.button(pregunta, key=f"sugerida_{i}", use_container_width=True):
                 estado.pendiente = {"texto": pregunta}
     if st.button("Borrar conversación", type="secondary"):
-        estado.mensajes, estado.votos, estado.pendiente = [], {}, None
+        estado.mensajes, estado.votos, estado.pendiente, estado.ultima_intencion = [], {}, None, None
         st.rerun()
 
 
@@ -129,6 +132,8 @@ def mostrar_tecnico(r: dict) -> None:
             st.write(f"**Fragmento:** {f['id']} — {f['titulo']} (similitud {f['similitud']:.2f})")
         if r.get("herramienta"):
             st.write(f"**Herramienta:** `{r['herramienta']}`")
+        if r.get("contexto_usado"):
+            st.write("**Memoria corta:** se respondió con el tema de la pregunta anterior.")
         if r.get("motivo"):
             st.write(f"**Motivo del guardrail:** `{r['motivo']}`")
 
@@ -236,8 +241,10 @@ if estado.pendiente:
         resultado = bot.responder_intencion(pendiente["intencion"], pendiente["texto"])
         estado.mensajes.append({"rol": "usuario", "texto": bot.etiqueta(pendiente["intencion"])})
     else:
-        resultado = bot.responder(pendiente["texto"])
+        resultado = bot.responder(pendiente["texto"], contexto=estado.ultima_intencion)
         estado.mensajes.append({"rol": "usuario", "texto": pendiente["texto"]})
     estado.mensajes.append({"rol": "asistente", "texto": resultado["respuesta"],
                             "resultado": resultado, "pregunta": pendiente["texto"]})
+    if resultado["nivel"] == "respuesta" and resultado["origen"] in ("modelo", "cache"):
+        estado.ultima_intencion = resultado["intencion"]
     st.rerun()

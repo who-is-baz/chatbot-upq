@@ -2,15 +2,20 @@
   "nombre": "Asistente UPQ",
   "bienvenida": "¡Hola! Soy el Asistente UPQ. Te doy información oficial de la Universidad Politécnica de Querétaro: admisión, becas, trámites, servicio social, titulación y más. ¿En qué te ayudo?",
   "aclaracion": "No estoy seguro de haberte entendido. ¿Quisiste preguntar por alguno de estos temas?",
-  "fallback": "Perdón, no tengo información sobre eso. Puedes comunicarte al conmutador 442 101 9000, escribir a servicios.estudiantiles@upq.edu.mx o visitar www.upq.mx.",
+  "fallback": [
+    "Perdón, no tengo información sobre eso. Puedes comunicarte al conmutador 442 101 9000, escribir a servicios.estudiantiles@upq.edu.mx o visitar www.upq.mx.",
+    "Lo siento, ese dato no lo tengo. Para resolverlo, llama al 442 101 9000 o escribe a servicios.estudiantiles@upq.edu.mx.",
+    "No encontré esa información en las fuentes oficiales que conozco. Te pueden ayudar en el 442 101 9000 o en servicios.estudiantiles@upq.edu.mx.",
+    "Esa pregunta está fuera de lo que puedo responder. Consulta www.upq.mx, llama al 442 101 9000 o escribe a servicios.estudiantiles@upq.edu.mx."
+  ],
   "fuente_fallback": "https://www.upq.mx/Institucion/Directorio#/",
   "motivos_guardrail": {
     "entrada_no_texto": "Solo puedo leer mensajes de texto. Escribe tu pregunta, por favor.",
     "entrada_vacia": "Parece que tu mensaje está vacío. Escribe tu pregunta, por favor.",
     "entrada_muy_larga": "Tu mensaje es muy largo. ¿Puedes resumir tu pregunta en una o dos frases?",
     "datos_personales": "Por tu seguridad, no compartas datos personales como tu CURP, correo o teléfono. Escribe tu pregunta sin ellos y con gusto te ayudo.",
-    "lenguaje_ofensivo": "Prefiero que platiquemos con respeto. Si tienes una duda sobre la UPQ, escríbela y te ayudo.",
-    "inyeccion": "Solo puedo darte información oficial de la UPQ. ¿Qué te gustaría saber de la universidad?",
+    "lenguaje_ofensivo": "No se permiten insultos ni faltas de respeto en este chat. Si tienes una duda sobre la UPQ, con gusto te ayudo.",
+    "inyeccion": "No puedo compartir información interna ni confidencial. Solo doy información oficial y pública de la UPQ.",
     "otra_universidad": "Solo tengo información de la Universidad Politécnica de Querétaro. Para otras instituciones, consulta su sitio oficial.",
     "salida_invalida": "No pude armar una respuesta segura. Intenta preguntar de otra forma."
   },
