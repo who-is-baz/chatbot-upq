@@ -35,6 +35,10 @@ st.set_page_config(page_title="Asistente UPQ", page_icon=str(LOGO))
 st.logo(str(LOGO), size="large")
 st.markdown(f"<style>{(RAIZ / 'assets' / 'estilos.css').read_text(encoding='utf-8')}</style>",
             unsafe_allow_html=True)
+# El modo oscuro se carga después de los estilos normales para que los sobrescriba.
+if st.session_state.get("modo_oscuro"):
+    st.markdown(f"<style>{(RAIZ / 'assets' / 'estilos_oscuro.css').read_text(encoding='utf-8')}</style>",
+                unsafe_allow_html=True)
 
 
 def iconos_redes() -> str:
@@ -102,6 +106,7 @@ with st.sidebar:
                                   help="Accesibilidad: reduce o aumenta el texto de la página.")
     escala = {"A−": 90, "A": 100, "A+": 118}.get(tamano or "A", 100)
     st.markdown(f"<style>html {{ font-size: {escala}%; }}</style>", unsafe_allow_html=True)
+    st.toggle("🌙 Modo oscuro", key="modo_oscuro")
     modo_tecnico = st.toggle("Modo técnico", help="Muestra intención, confianza, top-3, origen y latencia.")
     if modo_tecnico:
         m = bot.cache.metricas()

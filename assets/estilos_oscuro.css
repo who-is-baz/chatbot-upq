@@ -1,0 +1,99 @@
+/* Modo oscuro del Asistente UPQ. Se carga encima de estilos.css solo cuando el interruptor está activo. */
+:root {
+  --osc-fondo: #0B1220;
+  --osc-superficie: #131C2E;
+  --osc-borde: #26344F;
+  --osc-texto: #E6EBF3;
+  --osc-texto-suave: #A9B4C6;
+  --osc-burbuja-usuario: #1B3A70;
+  --osc-rojo-claro: #FF7A8F;   /* rojo para texto sobre fondo oscuro (el #BA0C2F no se lee) */
+}
+
+/* Fondo general, barra superior y zona de la caja de texto */
+[data-testid="stApp"], [data-testid="stAppViewContainer"], [data-testid="stBottom"] > div { background: var(--osc-fondo) !important; }
+header[data-testid="stHeader"] { background: color-mix(in srgb, var(--osc-fondo) 96%, transparent) !important; }
+
+/* Texto de la conversación */
+[data-testid="stMainBlockContainer"] p, [data-testid="stMainBlockContainer"] li, [data-testid="stMainBlockContainer"] label,
+[data-testid="stMainBlockContainer"] h1, [data-testid="stMainBlockContainer"] h2, [data-testid="stMainBlockContainer"] h3,
+[data-testid="stMainBlockContainer"] [data-testid="stMetricValue"], [data-testid="stMainBlockContainer"] [data-testid="stMetricLabel"] {
+  color: var(--osc-texto) !important;
+}
+[data-testid="stMainBlockContainer"] [data-testid="stCaptionContainer"],
+[data-testid="stMainBlockContainer"] [data-testid="stImageCaption"] { color: var(--osc-texto-suave) !important; }
+[data-testid="stMainBlockContainer"] code { background: var(--osc-borde) !important; color: var(--osc-texto) !important; }
+
+/* Encabezado */
+.upq-encabezado { border-bottom-color: var(--osc-texto-suave) !important; }
+.upq-nombre, .upq-titulo, .upq-tarjetas-titulo { color: var(--osc-texto) !important; }
+.upq-nombre span, .upq-titulo span { color: var(--osc-rojo-claro) !important; }
+.upq-encabezado img { background: #FFFFFF !important; border-radius: 50% !important; }
+
+/* Burbujas */
+[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarImage"]),
+[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarAssistant"]) {
+  background: var(--osc-superficie) !important;
+  border-color: var(--osc-borde) !important;
+  border-left-color: var(--upq-rojo) !important;
+  box-shadow: none !important;
+}
+[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarCustom"]),
+[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarUser"]) { background: var(--osc-burbuja-usuario) !important; }
+
+/* Botones y tarjetas de la conversación */
+[data-testid="stMainBlockContainer"] .stButton > button {
+  background: var(--osc-superficie) !important;
+  border-color: var(--osc-borde) !important;
+  color: var(--osc-texto) !important;
+}
+[data-testid="stMainBlockContainer"] .stButton > button:hover { background: var(--upq-rojo) !important; border-color: var(--upq-rojo) !important; color: #FFFFFF !important; }
+.st-key-tarjetas .stButton > button { border-left-color: var(--upq-rojo) !important; box-shadow: none !important; }
+
+/* Fuente oficial */
+.upq-fuente { border-top-color: var(--osc-borde) !important; color: var(--osc-texto-suave) !important; }
+.upq-fuente strong { color: var(--osc-texto) !important; }
+.upq-fuente a { color: var(--osc-rojo-claro) !important; }
+
+/* Caja de texto */
+[data-testid="stChatInput"] { background: var(--osc-superficie) !important; border-color: var(--osc-texto-suave) !important; }
+[data-testid="stChatInput"] textarea { color: var(--osc-texto) !important; }
+[data-testid="stChatInput"] textarea::placeholder { color: var(--osc-texto-suave) !important; }
+
+/* Detalle técnico y diálogo de imagen */
+[data-testid="stMainBlockContainer"] [data-testid="stExpander"] details {
+  background: var(--osc-superficie) !important;
+  border-color: var(--osc-borde) !important;
+}
+[data-testid="stMainBlockContainer"] [data-testid="stExpander"] summary { color: var(--osc-texto) !important; }
+div[role="dialog"] { background: var(--osc-superficie) !important; color: var(--osc-texto) !important; }
+div[role="dialog"] h2, div[role="dialog"] p, div[role="dialog"] button { color: var(--osc-texto) !important; }
+
+/* Texto de respuestas, pies de foto y desplegables (Streamlit les pone color propio) */
+[data-testid="stMainBlockContainer"] [data-testid="stMarkdownContainer"],
+[data-testid="stMainBlockContainer"] [data-testid="stMarkdownContainer"] * { color: var(--osc-texto) !important; }
+[data-testid="stMainBlockContainer"] [data-testid="stExpander"] summary * { color: var(--osc-texto) !important; }
+[data-testid="stMainBlockContainer"] [data-testid="stImage"] [data-testid="stImageCaption"],
+[data-testid="stMainBlockContainer"] [data-testid="stCaptionContainer"] * { color: var(--osc-texto-suave) !important; }
+.upq-fuente, .upq-fuente * { color: var(--osc-texto-suave) !important; }
+.upq-fuente strong { color: var(--osc-texto) !important; }
+.upq-fuente a, .upq-fuente a * { color: var(--osc-rojo-claro) !important; }
+
+/* Piezas internas de la caja de texto */
+[data-testid="stChatInput"] > div, [data-testid="stChatInput"] textarea { background: transparent !important; }
+
+/* Palabras en rojo del encabezado (más específico que la regla de texto claro) */
+[data-testid="stMainBlockContainer"] .upq-nombre span,
+[data-testid="stMainBlockContainer"] .upq-titulo span { color: var(--osc-rojo-claro) !important; }
+
+/* Encabezado del desplegable "Detalle técnico" abierto o con el mouse encima */
+[data-testid="stMainBlockContainer"] [data-testid="stExpander"] summary,
+[data-testid="stMainBlockContainer"] [data-testid="stExpander"] summary:hover { background: var(--osc-superficie) !important; }
+
+/* Diálogo de la imagen en grande */
+[data-testid="stDialog"] div:has(> [role="dialog"]), [data-testid="stDialog"] [role="dialog"] {
+  background: var(--osc-superficie) !important;
+  color: var(--osc-texto) !important;
+}
+[data-testid="stDialog"] [role="dialog"] * { color: var(--osc-texto) !important; }
+[data-testid="stMainBlockContainer"] .upq-fuente a,
+[data-testid="stMainBlockContainer"] .upq-fuente a * { color: var(--osc-rojo-claro) !important; }
