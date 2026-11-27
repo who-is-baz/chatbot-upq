@@ -5,24 +5,29 @@ from src.preprocesamiento import limpiar_texto
 
 LARGO_MAXIMO = 300
 
-# El chatbot solo responde sobre la UPQ: si la pregunta nombra otra institución, se rechaza
-# antes del modelo, porque el clasificador la confundiría con una pregunta válida.
+# El chatbot solo responde sobre la UPQ: si la pregunta nombra otra institución o habla de
+# educación básica, se rechaza antes del modelo, porque el clasificador la confundiría con una
+# pregunta válida (por ejemplo, "vacaciones de la SEP en primaria" se parece a calendario_escolar).
 OTRAS_UNIVERSIDADES = {"unam", "uaq", "uteq", "ipn", "itesm", "upsrj", "itq", "uvm", "anahuac", "udg", "uanl", "upn"}
+OTROS_NIVELES = {"primaria", "secundaria", "kinder", "preescolar", "guarderia"}
 FRASES_OTRAS = ("tec de monterrey", "la salle", "universidad autonoma de queretaro", "politecnico nacional")
 
 # Se comparan contra el texto ya limpio (sin acentos ni signos).
 GROSERIAS = {"pendejo", "pendeja", "pinche", "chingada", "chingado", "chingar", "verga", "puto", "puta",
              "cabron", "cabrona", "mierda", "culero", "culera", "idiota", "estupido", "estupida", "imbecil",
              "mamon", "ptm", "alv"}
+FRASES_OFENSIVAS = ("ni madres", "valiendo madre", "a la madre", "hijo de tu", "chinga tu")
 FRASES_INYECCION = ("ignora las instrucciones", "ignora tus instrucciones", "olvida tus instrucciones",
                     "olvida las instrucciones", "ignore previous", "ignore all", "actua como", "ahora eres",
                     "system prompt", "prompt del sistema", "revela tus instrucciones", "jailbreak",
-                    "modo desarrollador")
+                    "modo desarrollador", "olvida que eres", "olvida q eres", "dime tu prompt",
+                    "muestrame tu prompt", "cual es tu prompt")
 
 # Datos personales: se buscan en el texto original, porque limpiar_texto quita la @.
 CORREO = re.compile(r"[\w.+-]+@[\w-]+\.[\w.]+")
 TELEFONO = re.compile(r"(?<!\d)(?:\+?52[\s-]?)?(?:\d[\s-]?){9}\d(?!\d)")
 CURP = re.compile(r"\b[A-Z]{4}\d{6}[HM][A-Z]{5}[A-Z0-9]\d\b", re.IGNORECASE)
+TARJETA = re.compile(r"(?<!\d)(?:\d[\s-]?){12,18}\d(?!\d)")
 
 # Marcas de datos sin verificar que nunca deben llegar al usuario.
 MARCAS_SIN_VERIFICAR = ("[SEMILLA]", "[PENDIENTE]")
@@ -38,14 +43,15 @@ OTRA_UNIVERSIDAD = "otra_universidad"
 
 
 def contiene_datos_personales(texto):
-    """True si el texto trae un correo, un teléfono de 10 dígitos o una CURP."""
-    return bool(CORREO.search(texto) or TELEFONO.search(texto) or CURP.search(texto))
+    """True si el texto trae un correo, un teléfono, una CURP o un número de tarjeta."""
+    return bool(CORREO.search(texto) or TELEFONO.search(texto) or CURP.search(texto) or TARJETA.search(texto))
 
 
 def menciona_otra_universidad(texto):
-    """True si el texto nombra otra universidad (se compara ya limpio)."""
+    """True si el texto nombra otra universidad o habla de educación básica (se compara ya limpio)."""
     limpio = limpiar_texto(texto)
-    return bool(set(limpio.split()) & OTRAS_UNIVERSIDADES) or any(f in limpio for f in FRASES_OTRAS)
+    palabras = set(limpio.split())
+    return bool(palabras & (OTRAS_UNIVERSIDADES | OTROS_NIVELES)) or any(f in limpio for f in FRASES_OTRAS)
 
 
 def validar_entrada(texto):
@@ -60,7 +66,7 @@ def validar_entrada(texto):
     if contiene_datos_personales(texto):
         return False, texto, DATOS_PERSONALES
     limpio = limpiar_texto(texto)
-    if set(limpio.split()) & GROSERIAS:
+    if set(limpio.split()) & GROSERIAS or any(f in limpio for f in FRASES_OFENSIVAS):
         return False, texto, LENGUAJE_OFENSIVO
     if any(f in limpio for f in FRASES_INYECCION):
         return False, texto, INYECCION
