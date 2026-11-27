@@ -6,6 +6,7 @@ Flujo y 3 niveles según la confianza del router (umbrales en models/config.json
   confianza < umbral_bajo            -> fallback con datos de contacto
 """
 import json
+import random
 import time
 from pathlib import Path
 
@@ -37,6 +38,10 @@ class ChatbotUPQ:
         cortas = corpus.drop_duplicates("intencion").set_index("intencion")
         self.respuestas = cortas[["respuesta", "fuente"]].to_dict("index")
         self.cache = Cache(capacidad=128)
+        # El fallback puede ser un texto o una lista de variantes (se elige una sin repetir la anterior).
+        fallback = self.config["fallback"]
+        self.fallbacks = [fallback] if isinstance(fallback, str) else list(fallback)
+        self._ultimo_fallback = None
 
     # ------------------------------------------------------------------ API pública
     def responder(self, texto) -> dict:
@@ -116,14 +121,20 @@ class ChatbotUPQ:
                           es_fallback=True, sugerencias=sugerencias)
 
     def _fallback(self) -> dict:
-        return self._base(self.config["fallback"], self.config["fuente_fallback"],
+        return self._base(self._mensaje_fallback(), self.config["fuente_fallback"],
                           ORIGEN_FALLBACK, NIVEL_FALLBACK, es_fallback=True)
 
     def _guardrail(self, motivo: str) -> dict:
-        mensaje = self.config["motivos_guardrail"].get(motivo, self.config["fallback"])
+        mensaje = self.config["motivos_guardrail"].get(motivo) or self._mensaje_fallback()
         return self._base(mensaje, "", ORIGEN_GUARDRAIL, NIVEL_FALLBACK, es_fallback=True, motivo=motivo)
 
     # ------------------------------------------------------------------ utilidades
+    def _mensaje_fallback(self) -> str:
+        """Una variante del fallback al azar, distinta de la anterior si hay más de una."""
+        opciones = [m for m in self.fallbacks if m != self._ultimo_fallback] or self.fallbacks
+        self._ultimo_fallback = random.choice(opciones)
+        return self._ultimo_fallback
+
     @staticmethod
     def _base(respuesta, fuente, origen, nivel, es_fallback=False, **extra) -> dict:
         resultado = {

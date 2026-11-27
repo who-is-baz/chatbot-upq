@@ -137,3 +137,16 @@ def test_voto_queda_registrado(tmp_path):
     assert bot.registrar_voto("hay becas", resultado, util=False)
     voto = leer_registro(ruta)[-1]
     assert voto["util"] is False and voto["intencion"] == resultado["intencion"]
+
+
+# ---------------------------------------------------------------- variantes del fallback
+def test_fallback_varia_sin_repetir_la_anterior(bot):
+    mensajes = [bot._fallback()["respuesta"] for _ in range(20)]
+    assert all(a != b for a, b in zip(mensajes, mensajes[1:]))
+    assert len(set(mensajes)) > 1
+    assert all("442 101 9000" in m for m in mensajes)
+
+
+def test_todas_las_variantes_del_fallback_traen_contacto(bot):
+    assert len(bot.fallbacks) >= 3
+    assert all("442 101 9000" in m and "servicios.estudiantiles@upq.edu.mx" in m for m in bot.fallbacks)

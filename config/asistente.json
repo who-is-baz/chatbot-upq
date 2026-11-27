@@ -2,7 +2,12 @@
   "nombre": "Asistente UPQ",
   "bienvenida": "¡Hola! Soy el Asistente UPQ. Te doy información oficial de la Universidad Politécnica de Querétaro: admisión, becas, trámites, servicio social, titulación y más. ¿En qué te ayudo?",
   "aclaracion": "No estoy seguro de haberte entendido. ¿Quisiste preguntar por alguno de estos temas?",
-  "fallback": "Perdón, no tengo información sobre eso. Puedes comunicarte al conmutador 442 101 9000, escribir a servicios.estudiantiles@upq.edu.mx o visitar www.upq.mx.",
+  "fallback": [
+    "Perdón, no tengo información sobre eso. Puedes comunicarte al conmutador 442 101 9000, escribir a servicios.estudiantiles@upq.edu.mx o visitar www.upq.mx.",
+    "Lo siento, ese dato no lo tengo. Para resolverlo, llama al 442 101 9000 o escribe a servicios.estudiantiles@upq.edu.mx.",
+    "No encontré esa información en las fuentes oficiales que conozco. Te pueden ayudar en el 442 101 9000 o en servicios.estudiantiles@upq.edu.mx.",
+    "Esa pregunta está fuera de lo que puedo responder. Consulta www.upq.mx, llama al 442 101 9000 o escribe a servicios.estudiantiles@upq.edu.mx."
+  ],
   "fuente_fallback": "https://www.upq.mx/Institucion/Directorio#/",
   "motivos_guardrail": {
     "entrada_no_texto": "Solo puedo leer mensajes de texto. Escribe tu pregunta, por favor.",
