@@ -22,7 +22,7 @@ REDES = [
 ]
 AVISO = ("Proyecto escolar de Fundamentos de IA. No es un canal oficial de la UPQ; "
          "verifica la información en www.upq.mx.")
-# Enlaces del pie de página, iguales a los del pie de upq.mx.
+# Enlaces oficiales, iguales a los del pie de página de upq.mx.
 ENLACES_PIE = {
     "Institución": [("Historia", "https://www.upq.mx/Institucion/Historia/"),
                     ("Filosofía", "https://www.upq.mx/Institucion/Filosofia/"),
@@ -51,6 +51,22 @@ def iconos_redes() -> str:
 
 st.markdown(f'<nav class="upq-redes" aria-label="Redes sociales de la UPQ">{iconos_redes()}</nav>',
             unsafe_allow_html=True)
+
+
+def contacto_upq() -> str:
+    """Datos de contacto, enlaces oficiales y redes de la UPQ (versión compacta para el sidebar)."""
+    secciones = "".join(
+        f"<h5>{titulo}</h5><ul>"
+        + "".join(f'<li><a href="{url}" target="_blank" rel="noopener">{texto}</a></li>' for texto, url in enlaces)
+        + "</ul>"
+        for titulo, enlaces in ENLACES_PIE.items()
+    )
+    return f"""<div class="upq-contacto">
+<p>Carretera Estatal 420 SN, El Marqués, Querétaro, CP 76240</p>
+<p>Tel. 442 101 9000 · comunicacion@upq.mx</p>
+{secciones}
+<h5>Redes sociales</h5><div class="upq-contacto-redes">{iconos_redes()}</div>
+</div>"""
 
 
 @st.cache_resource
@@ -91,6 +107,8 @@ with st.sidebar:
     if st.button("Borrar conversación", type="secondary"):
         estado.mensajes, estado.votos, estado.pendiente, estado.ultima_intencion = [], {}, None, None
         st.rerun()
+    with st.expander("Contacto y enlaces de la UPQ"):
+        st.markdown(contacto_upq(), unsafe_allow_html=True)
 
 
 # ---------------------------------------------------------------- render
@@ -202,32 +220,6 @@ for idx, msg in enumerate(estado.mensajes):
             st.markdown(msg["texto"])
         else:
             mostrar_respuesta(idx, msg)
-
-
-# ---------------------------------------------------------------- pie de página
-def pie_de_pagina() -> str:
-    columnas = "".join(
-        f'<div class="upq-pie-col"><h4>{titulo}</h4><ul>'
-        + "".join(f'<li><a href="{url}" target="_blank" rel="noopener">{texto}</a></li>' for texto, url in enlaces)
-        + "</ul></div>"
-        for titulo, enlaces in ENLACES_PIE.items()
-    )
-    return f"""
-<footer class="upq-pie">
-  <div class="upq-pie-col">
-    <h4>Universidad Politécnica de Querétaro</h4>
-    <p>Carretera Estatal 420 SN, El Marqués, Querétaro, CP 76240</p>
-    <p>Tel. 442 101 9000</p>
-    <p>comunicacion@upq.mx</p>
-  </div>
-  {columnas}
-  <div class="upq-pie-col"><h4>Redes sociales</h4><div class="upq-pie-redes">{iconos_redes()}</div></div>
-  <div class="upq-pie-aviso">{AVISO}</div>
-</footer>
-"""
-
-
-st.markdown(pie_de_pagina(), unsafe_allow_html=True)
 
 
 # ---------------------------------------------------------------- entrada
