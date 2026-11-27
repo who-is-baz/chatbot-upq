@@ -185,7 +185,8 @@ regla, la prueba adversarial tenía 1 pregunta ajena respondida directo.
 
 La interfaz (`app.py`, Streamlit) sigue la identidad visual de [upq.mx](https://www.upq.mx):
 
-- **Colores** tomados de la hoja de estilos del sitio: azul `#002D72` y rojo `#BA0C2F` (`.streamlit/config.toml`).
+- **Colores:** rojo `#BA0C2F` de la hoja de estilos del sitio y azul oscuro `#001F4D` (más contraste que el
+  `#002D72` del sitio). El azul se ajusta en `--upq-azul` (`assets/estilos.css`) y en `.streamlit/config.toml`.
 - **Tipografías** de Google Fonts: Nunito Sans (la misma del sitio) para el texto y Barlow Condensed
   ExtraBold itálica para los títulos.
 - **Encabezado** con el logo y "UNIVERSIDAD **POLITÉCNICA** DE QUERÉTARO", barra flotante de redes
