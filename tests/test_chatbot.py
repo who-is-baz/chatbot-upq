@@ -150,3 +150,43 @@ def test_fallback_varia_sin_repetir_la_anterior(bot):
 def test_todas_las_variantes_del_fallback_traen_contacto(bot):
     assert len(bot.fallbacks) >= 3
     assert all("442 101 9000" in m and "servicios.estudiantiles@upq.edu.mx" in m for m in bot.fallbacks)
+
+
+# ---------------------------------------------------------------- memoria corta
+def test_seguimiento_corto_usa_el_tema_anterior(monkeypatch):
+    bot = ChatbotUPQ()
+    medio = (bot.umbral_alto + bot.umbral_bajo) / 2
+    fijar_top3(monkeypatch, [("costos_pagos", medio), ("oferta_educativa", 0.2), ("becas", 0.1)])
+    r = bot.responder("y cuánto dura", contexto="oferta_educativa")
+    assert r["contexto_usado"] and r["intencion"] == "oferta_educativa" and r["nivel"] == "respuesta"
+    assert r["confianza"] == 0.2
+
+
+def test_sin_contexto_no_cambia_nada(monkeypatch):
+    bot = ChatbotUPQ()
+    medio = (bot.umbral_alto + bot.umbral_bajo) / 2
+    fijar_top3(monkeypatch, [("costos_pagos", medio), ("oferta_educativa", 0.2), ("becas", 0.1)])
+    r = bot.responder("y cuánto dura")
+    assert not r["contexto_usado"] and r["nivel"] == "aclaracion"
+
+
+@pytest.mark.parametrize("texto, top3, contexto", [
+    ("y cuánto dura", [("costos_pagos", 0.99), ("oferta_educativa", 0.005), ("becas", 0.005)], "oferta_educativa"),
+    ("y cuánto dura la carrera de mecatrónica en la upq", [("costos_pagos", 0.5), ("oferta_educativa", 0.2),
+                                                            ("becas", 0.1)], "oferta_educativa"),
+    ("y cuánto dura", [("costos_pagos", 0.5), ("becas", 0.2), ("admision", 0.1)], "oferta_educativa"),
+    ("y cuánto dura", [("costos_pagos", 0.5), ("saludo", 0.2), ("becas", 0.1)], "saludo"),
+])
+def test_casos_donde_no_se_usa_el_contexto(monkeypatch, texto, top3, contexto):
+    # confianza alta, pregunta larga, tema anterior fuera del top-3, o tema anterior social
+    bot = ChatbotUPQ()
+    fijar_top3(monkeypatch, top3)
+    assert not bot.responder(texto, contexto=contexto)["contexto_usado"]
+
+
+def test_respuestas_con_contexto_no_se_guardan_en_cache(monkeypatch):
+    bot = ChatbotUPQ()
+    medio = (bot.umbral_alto + bot.umbral_bajo) / 2
+    fijar_top3(monkeypatch, [("costos_pagos", medio), ("oferta_educativa", 0.2), ("becas", 0.1)])
+    bot.responder("y cuánto dura", contexto="oferta_educativa")
+    assert len(bot.cache) == 0

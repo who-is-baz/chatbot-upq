@@ -22,6 +22,7 @@ RAIZ = Path(__file__).resolve().parent.parent
 ORIGEN_GUARDRAIL, ORIGEN_CACHE, ORIGEN_MODELO, ORIGEN_FALLBACK = "guardrail", "cache", "modelo", "fallback"
 NIVEL_RESPUESTA, NIVEL_ACLARACION, NIVEL_FALLBACK = "respuesta", "aclaracion", "fallback"
 INTENCIONES_SOCIALES = {"saludo", "despedida", "agradecimiento"}
+MAX_PALABRAS_SEGUIMIENTO = 5  # memoria corta: solo preguntas de seguimiento cortas
 
 
 class ChatbotUPQ:
@@ -44,8 +45,12 @@ class ChatbotUPQ:
         self._ultimo_fallback = None
 
     # ------------------------------------------------------------------ API pública
-    def responder(self, texto) -> dict:
-        """Recibe la pregunta del usuario y devuelve el dict del contrato (ver README)."""
+    def responder(self, texto, contexto: str | None = None) -> dict:
+        """Recibe la pregunta del usuario y devuelve el dict del contrato (ver README).
+
+        contexto: la intención de la respuesta anterior en esta conversación (memoria corta). Sirve para
+        preguntas de seguimiento como "y cuánto dura" después de "qué carreras hay".
+        """
         inicio = time.perf_counter()
 
         ok, texto, motivo = guardrails.validar_entrada(texto)
@@ -61,18 +66,25 @@ class ChatbotUPQ:
         prediccion = router.predecir(clave)
         intencion, confianza, top3 = prediccion["intencion"], prediccion["confianza"], prediccion["top3"]
 
-        if confianza >= self.umbral_alto:
+        usa_contexto = self._sigue_el_tema(clave, contexto, confianza, top3)
+        if usa_contexto:
+            # Se responde con la intención anterior; la confianza es la que el modelo le da a esa intención.
+            intencion, confianza = contexto, dict(top3)[contexto]
+            resultado = self._contestar(texto, intencion)
+        elif confianza >= self.umbral_alto:
             resultado = self._contestar(texto, intencion)
         elif confianza >= self.umbral_bajo:
             resultado = self._aclarar(top3)
         else:
             resultado = self._fallback()
-        resultado.update(intencion=intencion, confianza=confianza, top3=top3)
+        resultado.update(intencion=intencion, confianza=confianza, top3=top3, contexto_usado=usa_contexto)
 
         if not guardrails.validar_salida(resultado["respuesta"]):
             resultado.update(self._guardrail("salida_invalida"))
         # Solo se guardan respuestas del modelo que no cambian con el día (las del calendario sí cambian).
-        elif resultado["origen"] == ORIGEN_MODELO and resultado["herramienta"] != "calendario":
+        # Tampoco las que dependen del contexto: "y cuánto dura" significa otra cosa en otro tema.
+        elif (resultado["origen"] == ORIGEN_MODELO and resultado["herramienta"] != "calendario"
+              and not usa_contexto):
             self.cache.set(clave, resultado)
         return self._cerrar(resultado, inicio, texto)
 
@@ -129,6 +141,13 @@ class ChatbotUPQ:
         return self._base(mensaje, "", ORIGEN_GUARDRAIL, NIVEL_FALLBACK, es_fallback=True, motivo=motivo)
 
     # ------------------------------------------------------------------ utilidades
+    def _sigue_el_tema(self, clave: str, contexto: str | None, confianza: float, top3: list) -> bool:
+        """Memoria corta: pregunta de seguimiento corta, dudosa y compatible con el tema anterior."""
+        return (contexto is not None and contexto not in INTENCIONES_SOCIALES
+                and confianza < self.umbral_alto
+                and len(clave.split()) <= MAX_PALABRAS_SEGUIMIENTO
+                and contexto in dict(top3))
+
     def _mensaje_fallback(self) -> str:
         """Una variante del fallback al azar, distinta de la anterior si hay más de una."""
         opciones = [m for m in self.fallbacks if m != self._ultimo_fallback] or self.fallbacks
@@ -141,6 +160,7 @@ class ChatbotUPQ:
             "intencion": None, "confianza": 0.0, "top3": [],
             "respuesta": respuesta, "fuente": fuente, "es_fallback": es_fallback,
             "origen": origen, "nivel": nivel, "fragmento": None, "herramienta": None, "sugerencias": [],
+            "contexto_usado": False,
         }
         resultado.update(extra)
         return resultado
