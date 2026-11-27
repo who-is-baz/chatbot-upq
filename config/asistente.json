@@ -1,6 +1,11 @@
 {
   "nombre": "Asistente UPQ",
   "bienvenida": "¡Hola! Soy el Asistente UPQ. Te doy información oficial de la Universidad Politécnica de Querétaro: admisión, becas, trámites, servicio social, titulación y más. ¿En qué te ayudo?",
+  "bienvenida_mascota": "{sonido} ¡Hola! Soy {nombre}, mascota de la UPQ, y hoy te atiendo como Asistente UPQ. Te doy información oficial de la Universidad Politécnica de Querétaro: admisión, becas, trámites, servicio social, titulación y más. ¿En qué te ayudo?",
+  "mascotas": {
+    "polo": {"nombre": "Polo", "avatar": "assets/img/institucion/avatar_polo.png", "sonido": "¡Pío, pío!"},
+    "poli": {"nombre": "Poli", "avatar": "assets/img/institucion/avatar_poli.png", "sonido": "¡Fiu, fiu!"}
+  },
   "aclaracion": "No estoy seguro de haberte entendido. ¿Quisiste preguntar por alguno de estos temas?",
   "fallback": [
     "Perdón, no tengo información sobre eso. Puedes comunicarte al conmutador 442 101 9000, escribir a servicios.estudiantiles@upq.edu.mx o visitar www.upq.mx.",

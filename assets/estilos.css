@@ -258,3 +258,6 @@ header[data-testid="stHeader"] {
   font-size: .8rem;
   white-space: nowrap;
 }
+[data-testid="stSidebar"] [data-testid="stButtonGroup"] button[aria-checked="true"]:hover,
+[data-testid="stSidebar"] [data-testid="stButtonGroup"] button[aria-checked="true"]:focus { color: #FFFFFF; background: var(--upq-rojo); }
+[data-testid="stSidebar"] [data-testid="stButtonGroup"] button[aria-checked="false"]:hover { color: var(--upq-rojo); }

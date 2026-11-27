@@ -11,8 +11,6 @@ from src.sugeridas import siguiente_tanda
 
 RAIZ = Path(__file__).resolve().parent
 LOGO = RAIZ / "assets" / "img" / "institucion" / "logo_upq.svg"
-AVATARES = {"assistant": str(RAIZ / "assets" / "img" / "institucion" / "avatar_polo.png"),
-            "user": ":material/person:"}
 # Redes oficiales de la UPQ: (nombre, enlace, ícono de Font Awesome Free en assets/img/redes/).
 REDES = [
     ("Facebook", "https://www.facebook.com/UPQoficial", "facebook-f"),
@@ -83,6 +81,7 @@ estado.setdefault("votos", {})        # índice del mensaje -> "👍" | "👎"
 # Memoria corta: intención de la última respuesta. Vive en la sesión de cada usuario, no en el bot
 # (el bot es compartido por todas las sesiones con st.cache_resource).
 estado.setdefault("ultima_intencion", None)
+estado.setdefault("mascota", "polo")      # mascota que da la cara: "polo" o "poli"
 # Preguntas sugeridas: 5 a la vez; "Otras preguntas" no repite hasta haber mostrado todas.
 if "sugeridas" not in estado:
     estado.sugeridas, estado.sugeridas_vistas = siguiente_tanda(bot.config["preguntas_sugeridas"], [])
@@ -94,6 +93,11 @@ with st.sidebar:
     st.markdown(f'<div class="upq-aviso">{AVISO}</div>', unsafe_allow_html=True)
     st.caption("Respondo con información tomada de fuentes oficiales de la Universidad Politécnica de Querétaro. "
                "No proceses datos personales: no escribas tu matrícula, CURP ni teléfono.")
+    mascotas = bot.config["mascotas"]
+    elegida = st.segmented_control("Mascota", list(mascotas), default=estado.mascota, key="selector_mascota",
+                                   format_func=lambda m: mascotas[m]["nombre"],
+                                   help="Elige quién te atiende. Cambia el avatar sin borrar la conversación.")
+    estado.mascota = elegida or estado.mascota
     tamano = st.segmented_control("Tamaño del texto", ["A−", "A", "A+"], default="A", key="tamano_texto",
                                   help="Accesibilidad: reduce o aumenta el texto de la página.")
     escala = {"A−": 90, "A": 100, "A+": 118}.get(tamano or "A", 100)
@@ -116,6 +120,11 @@ with st.sidebar:
         st.rerun()
     with st.expander("Contacto y enlaces de la UPQ"):
         st.markdown(contacto_upq(), unsafe_allow_html=True)
+
+
+# Avatares: la mascota elegida para el asistente y un ícono simple para el usuario.
+mascota = bot.config["mascotas"][estado.mascota]
+AVATARES = {"assistant": str(RAIZ / mascota["avatar"]), "user": ":material/person:"}
 
 
 # ---------------------------------------------------------------- render
@@ -209,7 +218,8 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 with st.chat_message("assistant", avatar=AVATARES["assistant"]):
-    st.markdown(bot.config["bienvenida"])
+    # El sonido de la mascota va solo en la bienvenida, nunca en las respuestas con información oficial.
+    st.markdown(bot.config["bienvenida_mascota"].format(nombre=mascota["nombre"], sonido=mascota["sonido"]))
 
 # Con la conversación vacía, las preguntas sugeridas también salen como tarjetas en el centro.
 if not estado.mensajes:
